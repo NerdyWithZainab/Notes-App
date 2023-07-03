@@ -3,7 +3,6 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'package:notes/config.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -18,10 +17,7 @@ import 'package:notes/config.dart';
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -29,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -50,20 +43,42 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAjNFOpX6esboJK8lUo0b8sahr3YaNhbag',
+    appId: '1:141842590435:web:f6b58384649f69df13f3d6',
+    messagingSenderId: '141842590435',
+    projectId: 'notes-mobile-application',
+    authDomain: 'notes-mobile-application.firebaseapp.com',
+    storageBucket: 'notes-mobile-application.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: androidApiKey,
-    appId: androidAppId,
-    messagingSenderId: androidMessagingSenderId,
-    projectId: androidProjectId,
-    storageBucket: androidStorageBucket,
+    apiKey: 'AIzaSyBjXgoo9wdZNz027asRuHof9CMsCv3i8kg',
+    appId: '1:141842590435:android:0a72750da7ba6a2b13f3d6',
+    messagingSenderId: '141842590435',
+    projectId: 'notes-mobile-application',
+    storageBucket: 'notes-mobile-application.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: iosApiKey,
-    appId: iosAppId,
-    messagingSenderId: iosMessagingSenderId,
-    projectId: iosProjectId,
-    storageBucket: iosStorageBucket,
-    iosBundleId: iosBundleId,
+    apiKey: 'AIzaSyBzxdfPrwlVwitXmTIGvIa1sNvUqnYt7TM',
+    appId: '1:141842590435:ios:9b148e76fd46b19c13f3d6',
+    messagingSenderId: '141842590435',
+    projectId: 'notes-mobile-application',
+    storageBucket: 'notes-mobile-application.appspot.com',
+    androidClientId: '141842590435-0lplloqu8csohrmq84cp5kerl493h47k.apps.googleusercontent.com',
+    iosClientId: '141842590435-t58ni03ec0qtp8krdroluj7ml2tph5pc.apps.googleusercontent.com',
+    iosBundleId: 'com.notes.notes',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBzxdfPrwlVwitXmTIGvIa1sNvUqnYt7TM',
+    appId: '1:141842590435:ios:9b148e76fd46b19c13f3d6',
+    messagingSenderId: '141842590435',
+    projectId: 'notes-mobile-application',
+    storageBucket: 'notes-mobile-application.appspot.com',
+    androidClientId: '141842590435-0lplloqu8csohrmq84cp5kerl493h47k.apps.googleusercontent.com',
+    iosClientId: '141842590435-t58ni03ec0qtp8krdroluj7ml2tph5pc.apps.googleusercontent.com',
+    iosBundleId: 'com.notes.notes',
   );
 }

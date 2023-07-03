@@ -1,13 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/firebase_options.dart';
 import 'package:notes/utils/authentication.dart';
 
-void main() {
+void main() async {
+  // Initializing the application
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     const MaterialApp(
       home: HomePage(),
@@ -15,6 +16,7 @@ void main() {
   );
 }
 
+// This displays the Login screen for authentication
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -41,6 +43,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+// Registering the user
   Future<void> _registerWithEmailAndPassword() async {
     final email = _email.text;
     final password = _password.text;
@@ -89,33 +92,42 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Register"),
       ),
-      body: Column(
-        children: [
-          TextField(
-            controller: _email,
-            enableSuggestions: false,
-            autocorrect: false,
-            keyboardType: TextInputType.emailAddress,
-            decoration:
-                const InputDecoration(hintText: 'Enter your email here'),
-          ),
-          TextField(
-            controller: _password,
-            obscureText: true,
-            enableSuggestions: false,
-            autocorrect: false,
-            decoration:
-                const InputDecoration(hintText: 'Enter your password here'),
-          ),
-          TextButton(
-            onPressed: _registerWithEmailAndPassword,
-            child: const Text('Register'),
-          ),
-          TextButton(
-            onPressed: _signInWithGoogle,
-            child: const Text("Login with Google"),
-          ),
-        ],
+      body: FutureBuilder(
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return Column(
+                children: [
+                  TextField(
+                    controller: _email,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                        hintText: 'Enter your email here'),
+                  ),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: const InputDecoration(
+                        hintText: 'Enter your password here'),
+                  ),
+                  TextButton(
+                    onPressed: _registerWithEmailAndPassword,
+                    child: const Text('Login'),
+                  ),
+                  TextButton(
+                    onPressed: _signInWithGoogle,
+                    child: const Text("Login with Google"),
+                  ),
+                ],
+              );
+            default:
+              return const Text('Loading...');
+          }
+        },
       ),
     );
   }
