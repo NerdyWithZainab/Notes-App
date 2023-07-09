@@ -1,30 +1,18 @@
-// ignore_for_file: use_build_context_synchronously
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+// This displays the Login screen for authentication
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:notes/firebase_options.dart';
-import 'package:notes/utils/authentication.dart';
-import 'package:notes/views/login_view.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-void main() async {
-  // Initializing the application
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(
-    const MaterialApp(
-      home: LoginView(),
-    ),
-  );
-}
+import '../utils/authentication.dart';
 
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
+class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -43,10 +31,12 @@ class _RegisterViewState extends State<RegisterView> {
     super.dispose();
   }
 
-  // Registering the user
-  Future<void> _registerWithEmailAndPassword() async {
+  // Signing in the user
+  Future<void> _signInWithEmailAndPassword() async {
     final email = _email.text;
     final password = _password.text;
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -90,7 +80,7 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Register"),
+        title: const Text("Login"),
       ),
       body: FutureBuilder(
         builder: (context, snapshot) {
@@ -115,7 +105,7 @@ class _RegisterViewState extends State<RegisterView> {
                         hintText: 'Enter your password here'),
                   ),
                   TextButton(
-                    onPressed: _registerWithEmailAndPassword,
+                    onPressed: _signInWithEmailAndPassword,
                     child: const Text('Login'),
                   ),
                   TextButton(
