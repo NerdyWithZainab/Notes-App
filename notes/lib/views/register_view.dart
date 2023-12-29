@@ -1,18 +1,18 @@
-// This displays the Login screen for authentication
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 import '../firebase_options.dart';
 import '../utils/authentication.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({Key? key}) : super(key: key);
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -31,12 +31,10 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
-  // Signing in the user
-  Future<void> _signInWithEmailAndPassword() async {
+  // Registering the user
+  Future<void> _registerWithEmailAndPassword() async {
     final email = _email.text;
     final password = _password.text;
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -60,7 +58,6 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _signInWithGoogle() async {
     User? user = await Authentication.signInWithGoogle(context: context);
     if (user != null) {
-      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -108,7 +105,7 @@ class _LoginViewState extends State<LoginView> {
                         hintText: 'Enter your password here'),
                   ),
                   TextButton(
-                    onPressed: _signInWithEmailAndPassword,
+                    onPressed: _registerWithEmailAndPassword,
                     child: const Text('Login'),
                   ),
                   TextButton(
