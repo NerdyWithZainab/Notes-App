@@ -80,47 +80,39 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Register"),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    controller: _email,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                        hintText: 'Enter your email here'),
-                  ),
-                  TextField(
-                    controller: _password,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                        hintText: 'Enter your password here'),
-                  ),
-                  TextButton(
-                    onPressed: _signInWithEmailAndPassword,
-                    child: const Text('Login'),
-                  ),
-                  TextButton(
-                    onPressed: _signInWithGoogle,
-                    child: const Text("Login with Google"),
-                  ),
-                ],
-              );
-            default:
-              return const Text('Loading...');
-          }
-        },
+      appBar: AppBar(title: const Text("Verify email"),),
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(hintText: 'Enter your email here'),
+          ),
+          TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration:
+                const InputDecoration(hintText: 'Enter your password here'),
+          ),
+          TextButton(
+            onPressed: _signInWithEmailAndPassword,
+            child: const Text('Login'),
+          ),
+          TextButton(
+            onPressed: _signInWithGoogle,
+            child: const Text("Login with Google"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil("/register/", (route) => false);
+            },
+            child: const Text('Not registered yet? Register here!'),
+          )
+        ],
       ),
     );
   }
