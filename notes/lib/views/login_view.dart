@@ -80,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Verify email"),),
+      appBar: AppBar(title: const Text("Login"),),
       body: Column(
         children: [
           TextField(
