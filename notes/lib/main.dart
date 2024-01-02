@@ -6,7 +6,7 @@ import 'package:notes/views/register_view.dart';
 import 'package:notes/views/verify_email_view.dart';
 import 'firebase_options.dart';
 
-void main() {
+void main() async{
   // Initializing the application
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
@@ -15,7 +15,8 @@ void main() {
     home: const HomePage(),
     routes: {
       '/login/': ((context) => const LoginView()),
-      '/register/': ((context) => const RegisterView())
+      '/register/': ((context) => const RegisterView()),
+      '/notes/': ((context) => const NotesView())
     },
   ));
 }
@@ -26,27 +27,35 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform),
+      future: Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
       builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            final user = FirebaseAuth.instance.currentUser;
-            if (user != null) {
-              if(user.emailVerified){
-                return const VerifyEmailView();
-              }
-               return const NotesView();
+        // Check if Firebase initialization is complete
+        if (snapshot.connectionState == ConnectionState.done) {
+          final user = FirebaseAuth.instance.currentUser;
+
+          // Check if the user is logged in
+          if (user != null) {
+            // Check if the email is verified
+            if (user.emailVerified) {
+              // User is logged in and email is verified
+              return const NotesView();
             } else {
-              return const LoginView();
-            }   
-          default:
-            return const CircularProgressIndicator();
+              // User is logged in but email is not verified
+              return const VerifyEmailView();
+            }
+          } else {
+            // User is not logged in
+            return const LoginView();
+          }
         }
+
+        // Show loading indicator while waiting for Firebase to initialize
+        return const CircularProgressIndicator();
       },
     );
   }
 }
+
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});

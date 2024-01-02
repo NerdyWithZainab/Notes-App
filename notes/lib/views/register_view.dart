@@ -52,7 +52,7 @@ class _RegisterViewState extends State<RegisterView> {
     }
   }
 
-  Future<void> _signInWithGoogle() async {
+  Future<void> _RegisterWithGoogle() async {
     User? user = await Authentication.signInWithGoogle(context: context);
     if (user != null) {
       showDialog(
@@ -98,7 +98,7 @@ class _RegisterViewState extends State<RegisterView> {
                       child: const Text('Register'),
                     ),
                     TextButton(
-                      onPressed: _signInWithGoogle,
+                      onPressed: _RegisterWithGoogle,
                       child: const Text("Register with Google"),
                     ),
                     TextButton(onPressed: (){
