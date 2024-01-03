@@ -1,16 +1,15 @@
-# notes
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
-A new Flutter project.
+<p align="center">"Every memory is a note encripted"</p>
+# Notes Mobile App
+This is a simple notes app where you can write your thoughts when you remember a memory.
 
-## Getting Started
+## How to use it
+```git clone https://github.com/NerdyWithZainab/Notes-App.git
+```
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Technologies Used
+- Flutter
+- Firebase
+    - Authentication
+- ChatGPT

@@ -32,7 +32,6 @@ class HomePage extends StatelessWidget {
         // Check if Firebase initialization is complete
         if (snapshot.connectionState == ConnectionState.done) {
           final user = FirebaseAuth.instance.currentUser;
-
           // Check if the user is logged in
           if (user != null) {
             // Check if the email is verified
