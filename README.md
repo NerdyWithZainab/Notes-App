@@ -9,7 +9,7 @@
 
 ### Notes Mobile App
 
-This is a simple notes app where you can write your thoughts when you remember a memory. It is still yet to be updated. You're more than welcome to contribute to this project.
+This is a simple notes app where you can write your thoughts when you remember a memory. It is still yet to be updated. 
 
 ## How to use it
 ```
@@ -21,3 +21,6 @@ git clone https://github.com/NerdyWithZainab/Notes-App.git
 - Firebase
     - Authentication
 - ChatGPT
+
+## Contributions
+You're more than welcome to contribute to this project.
