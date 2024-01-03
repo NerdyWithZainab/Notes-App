@@ -4,7 +4,7 @@
 
 ### Notes Mobile App
 
-This is a simple notes app where you can write your thoughts when you remember a memory.
+This is a simple notes app where you can write your thoughts when you remember a memory. It is still yet to be updated. You're more than welcome to contribute to this project.
 
 ## How to use it
 ```
