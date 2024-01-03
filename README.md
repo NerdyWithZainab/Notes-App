@@ -5,7 +5,8 @@
 This is a simple notes app where you can write your thoughts when you remember a memory.
 
 ## How to use it
-```git clone https://github.com/NerdyWithZainab/Notes-App.git
+```
+git clone https://github.com/NerdyWithZainab/Notes-App.git
 ```
 
 ### Technologies Used
