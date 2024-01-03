@@ -1,4 +1,7 @@
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+[![](http://flutter-badge.zaynjarvis.com/version/flutter_signin_button)](https://pub.dartlang.org/packages/flutter_signin_button)
+
+
 
 <p align="center">"Every memory is a note encripted"</p>
 
