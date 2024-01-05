@@ -7,7 +7,6 @@ import 'package:notes/views/verify_email_view.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
-
 void main() async {
   // Initializing the application
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,26 +31,22 @@ class HomePage extends StatelessWidget {
       future: Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform),
       builder: (context, snapshot) {
-        // Check if Firebase initialization is complete
-        if (snapshot.connectionState == ConnectionState.done) {
-          final user = FirebaseAuth.instance.currentUser;
-          // Check if the user is logged in
-          if (user != null) {
-            // Check if the email is verified
-            if (user.emailVerified) {
-              // User is logged in and email is verified
-              return const NotesView();
+          switch(snapshot.connectionState) {
+            case ConnectionState.done:
+            final user = FirebaseAuth.instance.currentUser;
+            if(user != null)
+            {
+              if(user.emailVerified){
+                return const VerifyEmailView();
+              } else {
+                return const NotesView();
+              }
+            } else {
+              return const LoginView();
             }
-            // User is logged in but email is not verified
-            return const VerifyEmailView();
-          } else {
-            // User is not logged in
-            return const LoginView();
+          default:
+            return const CircularProgressIndicator();
           }
-        }
-
-        // Show loading indicator while waiting for Firebase to initialize
-        return const CircularProgressIndicator();
       },
     );
   }
@@ -75,13 +70,14 @@ class _NotesViewState extends State<NotesView> {
         actions: [
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
-              switch(value){      
+              switch (value) {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
-                      await FirebaseAuth.instance.signOut();
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).pushNamedAndRemoveUntil('/login/', (_) => false);
+                    await FirebaseAuth.instance.signOut();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/login/', (_) => false);
                   }
                   devtools.log(shouldLogout.toString());
                   break;
@@ -102,14 +98,24 @@ class _NotesViewState extends State<NotesView> {
 }
 
 Future<bool> showLogOutDialog(BuildContext context) {
-  return showDialog<bool>(context: context, builder: (context){
-    return AlertDialog(
-      title: const Text("Sign Out") ,
-      content: const Text("Are you sure you want to sign out?"),
-      actions: [
-        TextButton(onPressed: (){Navigator.of(context).pop(false);}, child: const Text('Cancel')),
-        TextButton(onPressed: (){Navigator.of(context).pop(true);}, child: const Text('Log Out'))
-      ],
-    );
-  }).then((value) => value ?? false);
+  return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Sign Out"),
+          content: const Text("Are you sure you want to sign out?"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: const Text('Log Out'))
+          ],
+        );
+      }).then((value) => value ?? false);
 }
