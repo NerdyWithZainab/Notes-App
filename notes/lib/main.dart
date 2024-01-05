@@ -7,6 +7,7 @@ import 'package:notes/views/verify_email_view.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
+
 void main() async {
   // Initializing the application
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,6 +80,7 @@ class _NotesViewState extends State<NotesView> {
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
                       await FirebaseAuth.instance.signOut();
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pushNamedAndRemoveUntil('/login/', (_) => false);
                   }
                   devtools.log(shouldLogout.toString());
