@@ -2,9 +2,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
+import 'package:notes/utilities/show_error_dialog.dart';
 import '../utils/authentication.dart';
 
-class LoginView extends StatefulWidget {  
+class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
 
   @override
@@ -51,10 +52,17 @@ class _LoginViewState extends State<LoginView> {
       } else if (e.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('An account already exists with this email.')));
+      } else if (e.code == 'user-not-found')
+      {
+        await showErrorDialog(context, 'User not found');
+      } else if (e.code == "wrong-password"){
+        await showErrorDialog(context,"Wrong Credentials.Please try again.");
+      } else {
+             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Failed to login. Please try again later.')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Failed to register. Please try again later.')));
+      await showErrorDialog(context, e.toString());
     }
   }
 
@@ -89,7 +97,8 @@ class _LoginViewState extends State<LoginView> {
             enableSuggestions: false,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(hintText: 'Enter your email here'),
+            decoration:
+                const InputDecoration(hintText: 'Enter your email here'),
           ),
           TextField(
             controller: _password,
@@ -119,3 +128,5 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
+
