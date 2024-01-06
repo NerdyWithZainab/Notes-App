@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
+import 'package:notes/views/verify_email_view.dart';
 import '../utils/authentication.dart';
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -35,6 +36,9 @@ class _RegisterViewState extends State<RegisterView> {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+          final user = FirebaseAuth.instance.currentUser;
+          await user?.sendEmailVerification();
+      Navigator.of(context).pushNamed(verifyEmailRoute);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(
