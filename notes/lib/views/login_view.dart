@@ -38,10 +38,20 @@ class _LoginViewState extends State<LoginView> {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        notesRoute,
-        (route) => false,
-      );
+      final user = FirebaseAuth.instance.currentUser;
+      if (user?.emailVerified ?? false) {
+        // User's email is verified
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          notesRoute,
+          (route) => false,
+        );
+      } else {
+        // user's email is NOT verified
+              Navigator.of(context).pushNamedAndRemoveUntil(
+          verifyEmailRoute,
+          (route) => false,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -52,14 +62,13 @@ class _LoginViewState extends State<LoginView> {
       } else if (e.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('An account already exists with this email.')));
-      } else if (e.code == 'user-not-found')
-      {
+      } else if (e.code == 'user-not-found') {
         await showErrorDialog(context, 'User not found');
-      } else if (e.code == "wrong-password"){
-        await showErrorDialog(context,"Wrong Credentials.Please try again.");
+      } else if (e.code == "wrong-password") {
+        await showErrorDialog(context, "Wrong Credentials.Please try again.");
       } else {
-             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Failed to login. Please try again later.')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Failed to login. Please try again later.')));
       }
     } catch (e) {
       await showErrorDialog(context, e.toString());
@@ -128,5 +137,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-
-
