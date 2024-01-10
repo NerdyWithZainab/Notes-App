@@ -1,7 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
-import 'package:notes/views/verify_email_view.dart';
+import 'package:notes/services/auth/auth_exceptions.dart';
+import 'package:notes/services/auth/auth_service.dart';
+import 'package:notes/utilities/show_error_dialog.dart';
+
 import '../utils/authentication.dart';
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -34,30 +36,30 @@ class _RegisterViewState extends State<RegisterView> {
     final email = _email.text;
     final password = _password.text;
     try {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-          final user = FirebaseAuth.instance.currentUser;
-          await user?.sendEmailVerification();
+      AuthService.firebase().createUser(email: email, password: password);
+          final user = AuthService.firebase().currentUser;
+          AuthService.firebase().sendEmailVerification();
       Navigator.of(context).pushNamed(verifyEmailRoute);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
+    } on WeakPasswordAuthException{
+      ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('The password provided is too weak.'),
           ),
         );
-      } else if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('An account already exists with this email.')));
-      }
-    } catch (e) {
+    } on EmailAlreadyInUseAuthException{
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('An account already exists with this email.')));
+      } on InvalidEmailAuthException{
+        await showErrorDialog(context, "This is an invalid email address.");
+      }
+      on GenericAuthException{
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Failed to register. Please try again later.')));
-    }
+      }
   }
 
-  Future<void> _RegisterWithGoogle() async {
-    User? user = await Authentication.signInWithGoogle(context: context);
+  Future<void> _registerWithGoogle() async {
+    final user = await Authentication.signInWithGoogle(context: context);
     if (user != null) {
       showDialog(
         context: context,
@@ -102,7 +104,7 @@ class _RegisterViewState extends State<RegisterView> {
                       child: const Text('Register'),
                     ),
                     TextButton(
-                      onPressed: _RegisterWithGoogle,
+                      onPressed: _registerWithGoogle,
                       child: const Text("Register with Google"),
                     ),
                     TextButton(onPressed: (){

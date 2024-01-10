@@ -1,7 +1,8 @@
 // This displays the Login screen for authentication
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
+import 'package:notes/services/auth/auth_exceptions.dart';
+import 'package:notes/services/auth/auth_service.dart';
 import 'package:notes/utilities/show_error_dialog.dart';
 import '../utils/authentication.dart';
 
@@ -16,67 +17,8 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
-  @override
-  void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  // Signing in the user
-  Future<void> _signInWithEmailAndPassword() async {
-    final email = _email.text;
-    final password = _password.text;
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      final user = FirebaseAuth.instance.currentUser;
-      if (user?.emailVerified ?? false) {
-        // User's email is verified
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          notesRoute,
-          (route) => false,
-        );
-      } else {
-        // user's email is NOT verified
-              Navigator.of(context).pushNamedAndRemoveUntil(
-          verifyEmailRoute,
-          (route) => false,
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('The password provided is too weak.'),
-          ),
-        );
-      } else if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('An account already exists with this email.')));
-      } else if (e.code == 'user-not-found') {
-        await showErrorDialog(context, 'User not found');
-      } else if (e.code == "wrong-password") {
-        await showErrorDialog(context, "Wrong Credentials.Please try again.");
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Failed to login. Please try again later.')));
-      }
-    } catch (e) {
-      await showErrorDialog(context, e.toString());
-    }
-  }
-
-  Future<void> _signInWithGoogle() async {
-    User? user = await Authentication.signInWithGoogle(context: context);
+   Future<void> _signInWithGoogle() async {
+    final user = await Authentication.signInWithGoogle(context: context);
     if (user != null) {
       // ignore: use_build_context_synchronously
       showDialog(
@@ -136,4 +78,60 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
+
+  @override
+  void initState() {
+    _email = TextEditingController();
+    _password = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  // Signing in the user
+  Future<void> _signInWithEmailAndPassword() async {
+    final email = _email.text;
+    final password = _password.text;
+    try {
+      await AuthService.firebase().logIn(email: email, password: password);
+      final user = AuthService.firebase().currentUser;
+      if (user?.isEmailVerified ?? false) {
+        // User's email is verified
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          notesRoute,
+          (route) => false,
+        );
+      } else {
+        // user's email is NOT verified
+              Navigator.of(context).pushNamedAndRemoveUntil(
+          verifyEmailRoute,
+          (route) => false,
+        );
+      } 
+    } on EmailAlreadyInUseAuthException {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('An account already exists with this email.')));}
+    on UserNotFoundAuthException{
+       await showErrorDialog(context, 'User not found');
+    } on WeakPasswordAuthException{
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('The password provided is too weak.')
+          ));
+    } on WrongPasswordAuthException{
+      await showErrorDialog(context, "Wrong Credentials.Please try again.");
+ 
+    } on GenericAuthException {
+      const Text("Authentication Error!");
+
+    }
+
+ 
+}
 }
