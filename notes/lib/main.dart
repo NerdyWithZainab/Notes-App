@@ -11,13 +11,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     title: "Home Page",
+    debugShowCheckedModeBanner: false,
     theme: ThemeData(primarySwatch: Colors.blue),
     home: const HomePage(),
     routes: {
       loginRoute: ((context) => const LoginView()),
       registerRoute: ((context) => const RegisterView()),
       notesRoute: ((context) => const NotesView()),
-      verifyEmailRoute:(context) => const VerifyEmailView()
+      verifyEmailRoute: (context) => const VerifyEmailView()
     },
   ));
 }
@@ -30,12 +31,11 @@ class HomePage extends StatelessWidget {
     return FutureBuilder(
       future: AuthService.firebase().initialize(),
       builder: (context, snapshot) {
-          switch(snapshot.connectionState) {
-            case ConnectionState.done:
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
-            if(user != null)
-            {
-              if(user.isEmailVerified){
+            if (user != null) {
+              if (user.isEmailVerified) {
                 return const VerifyEmailView();
               } else {
                 return const NotesView();
@@ -45,9 +45,8 @@ class HomePage extends StatelessWidget {
             }
           default:
             return const CircularProgressIndicator();
-          }
+        }
       },
     );
   }
 }
-
