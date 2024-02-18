@@ -29,7 +29,6 @@ void main() {
       await expectLater(badEmailUser,
           throwsA(const TypeMatcher<UserNotFoundAuthException>()));
     });
-    ;
 
     test('Should be able to initialize in less than 2 seconds', () async {
       await provider.initialize();
