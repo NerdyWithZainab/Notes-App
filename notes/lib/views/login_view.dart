@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
 import 'package:notes/services/auth/auth_exceptions.dart';
 import 'package:notes/services/auth/auth_service.dart';
-import 'package:notes/utilities/show_error_dialog.dart';
+import 'package:notes/utilities/dialogs/error_dialog.dart';
 import '../utils/authentication.dart';
 
 class LoginView extends StatefulWidget {
@@ -17,7 +17,7 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
-   Future<void> _signInWithGoogle() async {
+  Future<void> _signInWithGoogle() async {
     final user = await Authentication.signInWithGoogle(context: context);
     if (user != null) {
       // ignore: use_build_context_synchronously
@@ -109,29 +109,23 @@ class _LoginViewState extends State<LoginView> {
         );
       } else {
         // user's email is NOT verified
-              Navigator.of(context).pushNamedAndRemoveUntil(
+        Navigator.of(context).pushNamedAndRemoveUntil(
           verifyEmailRoute,
           (route) => false,
         );
-      } 
+      }
     } on EmailAlreadyInUseAuthException {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('An account already exists with this email.')));}
-    on UserNotFoundAuthException{
-       await showErrorDialog(context, 'User not found');
-    } on WeakPasswordAuthException{
+          content: Text('An account already exists with this email.')));
+    } on UserNotFoundAuthException {
+      await showErrorDialog(context, 'User not found');
+    } on WeakPasswordAuthException {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('The password provided is too weak.')
-          ));
-    } on WrongPasswordAuthException{
+          const SnackBar(content: Text('The password provided is too weak.')));
+    } on WrongPasswordAuthException {
       await showErrorDialog(context, "Wrong Credentials.Please try again.");
- 
     } on GenericAuthException {
       const Text("Authentication Error!");
-
     }
-
- 
-}
+  }
 }
