@@ -43,6 +43,13 @@ class _NotesViewState extends State<NotesView> {
         ),
         backgroundColor: Colors.deepPurple.shade600,
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(newNoteRoute);
+            },
+            icon: const Icon(Icons.add),
+            color: Colors.white,
+          ),
           PopupMenuButton<MenuAction>(
             icon: const Icon(
               Icons.more_vert,
@@ -81,6 +88,7 @@ class _NotesViewState extends State<NotesView> {
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
+                        case ConnectionState.active:
                           return const Text('Waiting for all notes');
                         default:
                           return const CircularProgressIndicator();
