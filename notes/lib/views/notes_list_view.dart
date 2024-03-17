@@ -15,21 +15,29 @@ class NotesListView extends StatelessWidget {
       itemCount: notes.length,
       itemBuilder: (context, index) {
         final note = notes[index];
-        return ListTile(
-          title: Text(
-            note.text,
-            maxLines: 1,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
+        return Dismissible(
+          key: Key(note.id.toString()),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) {
+            onDeleteNote(note);
+          },
+          confirmDismiss: ((direction) async {
+            return await showDeleteDialog(context);
+          }),
+          background: Container(
+            color: Colors.red,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            alignment: Alignment.centerRight,
+            child: Icon(Icons.delete_outline),
           ),
-          trailing: IconButton(
-              onPressed: () async {
-                final shouldDelete = await showDeleteDialog(context);
-                if (shouldDelete) {
-                  onDeleteNote(note);
-                }
-              },
-              icon: const Icon(Icons.delete_outlined)),
+          child: ListTile(
+            title: Text(
+              note.text,
+              maxLines: 1,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         );
       },
     );
