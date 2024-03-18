@@ -16,7 +16,35 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  String? _emailError;
+  String? _passwordError;
   bool _obscureText = true;
+
+  bool _validateFields() {
+    bool isValid = true;
+
+    // Resetting error messages
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+    });
+
+    if (_email.text.isEmpty) {
+      setState(() {
+        _emailError = "Email cannot be empty";
+      });
+      isValid = false;
+    }
+
+    if (_password.text.isEmpty) {
+      setState(() {
+        _passwordError = "Password cannot be empty";
+      });
+      isValid = false;
+    }
+
+    return isValid;
+  }
 
   Future<void> _signInWithGoogle() async {
     final user = await Authentication.signInWithGoogle(context: context);
@@ -49,8 +77,10 @@ class _LoginViewState extends State<LoginView> {
             enableSuggestions: false,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
-            decoration:
-                const InputDecoration(hintText: 'Enter your email here'),
+            decoration: InputDecoration(
+              hintText: 'Enter your email here',
+              errorText: _emailError,
+            ),
           ),
           TextField(
             controller: _password,
@@ -59,6 +89,7 @@ class _LoginViewState extends State<LoginView> {
             autocorrect: false,
             decoration: InputDecoration(
                 hintText: 'Enter your password here',
+                errorText: _passwordError,
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureText ? Icons.visibility : Icons.visibility_off,
@@ -111,6 +142,10 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _signInWithEmailAndPassword() async {
     final email = _email.text;
     final password = _password.text;
+
+    if (!_validateFields()) {
+      return; // Prevent login attempt if validation fails
+    }
     try {
       await AuthService.firebase().logIn(email: email, password: password);
       final user = AuthService.firebase().currentUser;
