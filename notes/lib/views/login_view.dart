@@ -16,6 +16,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  bool _obscureText = true;
 
   Future<void> _signInWithGoogle() async {
     final user = await Authentication.signInWithGoogle(context: context);
@@ -53,11 +54,23 @@ class _LoginViewState extends State<LoginView> {
           ),
           TextField(
             controller: _password,
-            obscureText: true,
+            obscureText: _obscureText,
             enableSuggestions: false,
             autocorrect: false,
-            decoration:
-                const InputDecoration(hintText: 'Enter your password here'),
+            decoration: InputDecoration(
+                hintText: 'Enter your password here',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(
+                      () {
+                        _obscureText = !_obscureText;
+                      },
+                    );
+                  },
+                )),
           ),
           TextButton(
             onPressed: _signInWithEmailAndPassword,
