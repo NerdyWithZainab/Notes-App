@@ -1,4 +1,6 @@
 // This displays the Login screen for authentication
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/constants/routes.dart';
@@ -6,6 +8,7 @@ import 'package:notes/services/auth/auth_exceptions.dart';
 import 'package:notes/services/auth/auth_service.dart';
 import 'package:notes/services/auth/bloc/auth_bloc.dart';
 import 'package:notes/services/auth/bloc/auth_event.dart';
+import 'package:notes/services/auth/bloc/auth_state.dart';
 import 'package:notes/utilities/dialogs/error_dialog.dart';
 import '../utils/authentication.dart';
 
@@ -106,9 +109,22 @@ class _LoginViewState extends State<LoginView> {
                   },
                 )),
           ),
-          TextButton(
-            onPressed: _signInWithEmailAndPassword,
-            child: const Text('Login'),
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if (state is AuthStateLoggedOut) {
+                if (state.exception is UserNotFoundAuthException) {
+                  await showErrorDialog(context, "User not found");
+                } else if (state.exception is UserNotFoundAuthException) {
+                  await showErrorDialog(context, 'Wrong credentials');
+                } else if (state.exception is GenericAuthException) {
+                  await showErrorDialog(context, "Authentication Error");
+                }
+              }
+            },
+            child: TextButton(
+              onPressed: _signInWithEmailAndPassword,
+              child: const Text('Login'),
+            ),
           ),
           TextButton(
             onPressed: _signInWithGoogle,
@@ -145,24 +161,24 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _signInWithEmailAndPassword() async {
     final email = _email.text;
     final password = _password.text;
-
+    context.read<AuthBloc>().add(AuthEventLogIn(email, password));
     if (!_validateFields()) {
       return; // Prevent login attempt if validation fails
     }
-    try {
-      context.read<AuthBloc>().add(AuthEventLogIn(
-            email,
-            password,
-          ));
-    } on UserNotFoundAuthException {
-      await showErrorDialog(context, 'User not found');
-    } on WeakPasswordAuthException {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('The password provided is too weak.')));
-    } on WrongPasswordAuthException {
-      await showErrorDialog(context, "Wrong Credentials.Please try again.");
-    } on GenericAuthException {
-      const Text("Authentication Error!");
+    await AuthService.firebase().logIn(email: email, password: password);
+    final user = AuthService.firebase().currentUser;
+    if (user?.isEmailVerified ?? false) {
+      // User's email is verified
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        notesRoute,
+        (route) => false,
+      );
+    } else {
+      // user's email is NOT verified
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        verifyEmailRoute,
+        (route) => false,
+      );
     }
   }
 }
