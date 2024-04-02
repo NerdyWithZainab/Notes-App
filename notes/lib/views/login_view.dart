@@ -1,6 +1,4 @@
 // This displays the Login screen for authentication
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/constants/routes.dart';
