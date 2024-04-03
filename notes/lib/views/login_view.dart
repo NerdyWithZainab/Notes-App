@@ -178,20 +178,5 @@ class _LoginViewState extends State<LoginView> {
     if (!_validateFields()) {
       return; // Prevent login attempt if validation fails
     }
-    await AuthService.firebase().logIn(email: email, password: password);
-    final user = AuthService.firebase().currentUser;
-    if (user?.isEmailVerified ?? false) {
-      // User's email is verified
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        notesRoute,
-        (route) => false,
-      );
-    } else {
-      // user's email is NOT verified
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        verifyEmailRoute,
-        (route) => false,
-      );
-    }
   }
 }

@@ -12,6 +12,7 @@ import 'package:notes/services/cloud/firebase_cloud_storage.dart';
 import 'package:notes/utilities/dialogs/logout_dialog.dart';
 import 'package:notes/views/notes_list_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
 
@@ -62,9 +63,8 @@ class _NotesViewState extends State<NotesView> {
                   if (shouldLogout) {
                     context.read<AuthBloc>().add(const AuthEventLogOut());
                     // ignore: use_build_context_synchronously
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (_) => false);
                   }
+
                   devtools.log(shouldLogout.toString());
                   break;
               }
