@@ -24,7 +24,6 @@ class _LoginViewState extends State<LoginView> {
   String? _emailError;
   String? _passwordError;
   bool _obscureText = true;
-  CloseDialog? _closeDialogHandle;
 
   bool _validateFields() {
     bool isValid = true;
@@ -77,18 +76,6 @@ class _LoginViewState extends State<LoginView> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialog = _closeDialogHandle;
-
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandle = null;
-          } else if (state.isLoading && closeDialog == null) {
-            _closeDialogHandle = showLoadingDialog(
-              context: context,
-              text: 'Loading...',
-            );
-          }
-
           if (state.exception is UserNotFoundAuthException) {
             await showErrorDialog(context, "User not found");
           } else if (state.exception is UserNotFoundAuthException) {
