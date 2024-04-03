@@ -38,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthStateNeedsVerification(isLoading: false));
       } else {
         emit(AuthStateLoggedIn(
-          isLoading: true,
+          isLoading: false,
           user: user,
         ));
       }
