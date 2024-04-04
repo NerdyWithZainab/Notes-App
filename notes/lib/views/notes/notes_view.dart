@@ -78,6 +78,27 @@ class _NotesViewState extends State<NotesView> {
           )
         ],
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.purple,
+        child: Row(
+          children: <Widget>[
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.folder,
+                  size: 40,
+                )),
+            const Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.note_alt,
+                size: 40,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: StreamBuilder(
           stream: _notesService.allNotes(ownerUserId: userId),
           builder: (context, snapshot) {
