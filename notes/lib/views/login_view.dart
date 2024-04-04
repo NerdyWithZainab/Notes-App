@@ -77,7 +77,8 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, "User not found");
+            await showErrorDialog(
+                context, "Cannot find the user with the entered credentials!");
           } else if (state.exception is UserNotFoundAuthException) {
             await showErrorDialog(context, 'Wrong credentials');
           } else if (state.exception is GenericAuthException) {
@@ -87,56 +88,69 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         appBar: AppBar(title: const Text("Login")),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: 'Enter your email here',
-                errorText: _emailError,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                  'Please log in to your account in order to interact with and create notes!'),
+              TextField(
+                controller: _email,
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: 'Enter your email here',
+                  errorText: _emailError,
+                ),
               ),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: _obscureText,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: InputDecoration(
-                  hintText: 'Enter your password here',
-                  errorText: _passwordError,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureText ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(
-                        () {
-                          _obscureText = !_obscureText;
-                        },
+              TextField(
+                controller: _password,
+                obscureText: _obscureText,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                    hintText: 'Enter your password here',
+                    errorText: _passwordError,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(
+                          () {
+                            _obscureText = !_obscureText;
+                          },
+                        );
+                      },
+                    )),
+              ),
+              TextButton(
+                onPressed: _signInWithEmailAndPassword,
+                child: const Text('Login'),
+              ),
+              TextButton(
+                onPressed: _signInWithGoogle,
+                child: const Text("Login with Google"),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventForgotPassword(email: ''),
                       );
-                    },
-                  )),
-            ),
-            TextButton(
-              onPressed: _signInWithEmailAndPassword,
-              child: const Text('Login'),
-            ),
-            TextButton(
-              onPressed: _signInWithGoogle,
-              child: const Text("Login with Google"),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(
-                      const AuthEventShouldRegister(),
-                    );
-              },
-              child: const Text('Not registered yet? Register here!'),
-            )
-          ],
+                },
+                child: const Text('I forgot my password'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventShouldRegister(),
+                      );
+                },
+                child: const Text('Not registered yet? Register here!'),
+              )
+            ],
+          ),
         ),
       ),
     );
