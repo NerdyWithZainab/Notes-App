@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:notes/extensions/buildcontext/loc.dart';
 import 'package:notes/services/auth/auth_service.dart';
 import 'package:notes/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:notes/utilities/generics/get_arguments.dart';
 import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/services/cloud/firebase_cloud_storage.dart';
+import 'package:path/path.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
@@ -94,20 +96,25 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'New Note',
-          style: TextStyle(
+        title: Text(
+          context.loc.note,
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),
-        actions: [IconButton(onPressed: () async {
-          final text = _textController.text;
-          if (_note == null || text.isEmpty){
-            await showCannotShareEmptyNoteDialog(context);
-          } else {
-            Share.share(text);
-          }
-        }, icon: const Icon(Icons.share),)],
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _textController.text;
+              if (_note == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context);
+              } else {
+                Share.share(text);
+              }
+            },
+            icon: const Icon(Icons.share),
+          )
+        ],
         backgroundColor: Colors.deepPurple.shade600,
       ),
       body: FutureBuilder(
@@ -120,8 +127,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                   controller: _textController,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: "Start typing your note...",
+                  decoration: InputDecoration(
+                    hintText: context.loc.start_typing_your_note,
                   ),
                 );
               default:

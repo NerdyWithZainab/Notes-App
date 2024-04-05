@@ -12,11 +12,14 @@ import 'package:notes/views/notes/create_update_note_view.dart';
 import 'package:notes/views/notes/notes_view.dart';
 import 'package:notes/views/register_view.dart';
 import 'package:notes/views/verify_email_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   // Initializing the application
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
+    supportedLocales: AppLocalizations.supportedLocales,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
     title: "Home Page",
     debugShowCheckedModeBanner: false,
     theme: ThemeData(primarySwatch: Colors.blue),
