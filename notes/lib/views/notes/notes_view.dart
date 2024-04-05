@@ -13,7 +13,6 @@ import 'package:notes/services/cloud/firebase_cloud_storage.dart';
 import 'package:notes/utilities/dialogs/logout_dialog.dart';
 import 'package:notes/views/notes_list_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
-import 'package:path/path.dart';
 
 extension Count<T extends Iterable> on Stream<T> {
   Stream<int> get getLength => map((event) => event.length);
@@ -47,7 +46,8 @@ class _NotesViewState extends State<NotesView> {
                   if (snapshot.hasData) {
                     final noteCount = snapshot.data ?? 0;
                     final text = context.loc.notes_title(noteCount);
-                    return Text(text, style: TextStyle(color: Colors.white));
+                    return Text(text,
+                        style: const TextStyle(color: Colors.white));
                   } else {
                     return const Text('');
                   }

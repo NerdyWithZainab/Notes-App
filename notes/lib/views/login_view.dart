@@ -93,79 +93,148 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.loc.login),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  context.loc.login_view_prompt,
-                ),
-                TextField(
-                  controller: _email,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: context.loc.email_text_field_placeholder,
-                    errorText: _emailError,
-                  ),
-                ),
-                TextField(
-                  controller: _password,
-                  obscureText: _obscureText,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  decoration: InputDecoration(
-                      hintText: context.loc.password_text_field_placeholder,
-                      errorText: _passwordError,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Stack(children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 500,
+                      ),
+                      Positioned(
+                        top: MediaQuery.of(context).size.height * 0.3,
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                            color: Colors.purple,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(30.0),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 40.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Login your account",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20.0,
+                                ),
+                                TextField(
+                                  controller: _email,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      hintText: context
+                                          .loc.email_text_field_placeholder,
+                                      errorText: _emailError,
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0)),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 2.0),
+                                      )),
+                                ),
+                                const SizedBox(height: 20),
+                                TextField(
+                                  controller: _password,
+                                  obscureText: _obscureText,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                  decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 2.0),
+                                      ),
+                                      hintText: context
+                                          .loc.password_text_field_placeholder,
+                                      errorText: _passwordError,
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _obscureText
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                        ),
+                                        onPressed: () {
+                                          setState(
+                                            () {
+                                              _obscureText = !_obscureText;
+                                            },
+                                          );
+                                        },
+                                      )),
+                                ),
+                                TextButton(
+                                  onPressed: _signInWithEmailAndPassword,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: Text(context.loc.login),
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: _signInWithGoogle,
+                                  child: const Text("Login with Google"),
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    context.read<AuthBloc>().add(
+                                          const AuthEventForgotPassword(
+                                              email: ''),
+                                        );
+                                  },
+                                  child: Text(context.loc.forgot_password),
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    context.read<AuthBloc>().add(
+                                          const AuthEventShouldRegister(),
+                                        );
+                                  },
+                                  child: Text(
+                                    context.loc.login_view_not_registered_yet,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                        onPressed: () {
-                          setState(
-                            () {
-                              _obscureText = !_obscureText;
-                            },
-                          );
-                        },
-                      )),
-                ),
-                TextButton(
-                  onPressed: _signInWithEmailAndPassword,
-                  child: Text(context.loc.login),
-                ),
-                TextButton(
-                  onPressed: _signInWithGoogle,
-                  child: const Text("Login with Google"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(
-                          const AuthEventForgotPassword(email: ''),
-                        );
-                  },
-                  child: Text(context.loc.forgot_password),
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(
-                          const AuthEventShouldRegister(),
-                        );
-                  },
-                  child: Text(
-                    context.loc.login_view_not_registered_yet,
+                      ),
+                    ],
                   ),
-                )
-              ],
+                ),
+              ),
             ),
-          ),
+          ]),
         ),
       ),
     );
@@ -180,7 +249,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _email.dispose();
     _password.dispose();
     super.dispose();
