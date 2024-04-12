@@ -23,11 +23,11 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _password;
   String? _emailError;
   String? _passwordError;
+  final bool _isLoggingIn = false;
   bool _obscureText = true;
 
   bool _validateFields() {
     bool isValid = true;
-
     // Resetting error messages
     setState(() {
       _emailError = null;
@@ -97,8 +97,12 @@ class _LoginViewState extends State<LoginView> {
       child: Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
-          child: Column(
-            children: [
+          child: Theme(
+            data: ThemeData(
+                inputDecorationTheme: const InputDecorationTheme(
+              errorStyle: TextStyle(color: Colors.white),
+            )),
+            child: Column(children: [
               Expanded(
                 flex: 2,
                 child: Center(
@@ -124,125 +128,143 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
               ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    color: Colors.purple,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(_isLoggingIn ? 0 : 30),
+                    topRight: Radius.circular(_isLoggingIn ? 0 : 30),
+                    bottomLeft: const Radius.circular(30),
+                    bottomRight: const Radius.circular(30),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 40.0),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const Text(
-                        "Login your account",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24.0,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 40.0),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    const Text(
+                      "Login your account",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24.0,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    TextField(
+                      controller: _email,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: context.loc.email_text_field_placeholder,
+                        errorText: _emailError,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50.0)),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 2.0),
+                          borderRadius:
+                              BorderRadius.circular(_isLoggingIn ? 0 : 50),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      TextField(
-                        controller: _email,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: context.loc.email_text_field_placeholder,
-                            errorText: _emailError,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0)),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 2.0),
-                            )),
-                      ),
-                      const SizedBox(height: 20),
-                      TextField(
-                        controller: _password,
-                        obscureText: _obscureText,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _password,
+                      obscureText: _obscureText,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: Colors.black, width: 2.0),
+                              borderRadius:
+                                  BorderRadius.circular(_isLoggingIn ? 0 : 50)),
+                          hintText: context.loc.password_text_field_placeholder,
+                          errorText: _passwordError,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black,
                             ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 2.0),
-                            ),
-                            hintText:
-                                context.loc.password_text_field_placeholder,
-                            errorText: _passwordError,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureText
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                              onPressed: () {
-                                setState(
-                                  () {
-                                    _obscureText = !_obscureText;
-                                  },
-                                );
-                              },
-                            )),
-                      ),
-                      TextButton(
+                            onPressed: () {
+                              setState(
+                                () {
+                                  _obscureText = !_obscureText;
+                                },
+                              );
+                            },
+                          )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: TextButton(
                         onPressed: _signInWithEmailAndPassword,
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
                         ),
                         child: Text(context.loc.login),
                       ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                        ),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white),
+                      onPressed: () {
+                        context.read<AuthBloc>().add(
+                              const AuthEventForgotPassword(email: ''),
+                            );
+                      },
+                      child: Text(context.loc.forgot_password),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white),
+                      onPressed: () {
+                        context.read<AuthBloc>().add(
+                              const AuthEventShouldRegister(),
+                            );
+                      },
+                      child: Text(
+                        context.loc.login_view_not_registered_yet,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: TextButton(
                         onPressed: _signInWithGoogle,
-                        child: const Text("Login with Google"),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50.0),
+                          child: Image.asset(
+                            'assets/icon/google.png',
+                            width: 50,
+                          ),
+                        ),
                       ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          context.read<AuthBloc>().add(
-                                const AuthEventForgotPassword(email: ''),
-                              );
-                        },
-                        child: Text(context.loc.forgot_password),
-                      ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          context.read<AuthBloc>().add(
-                                const AuthEventShouldRegister(),
-                              );
-                        },
-                        child: Text(
-                          context.loc.login_view_not_registered_yet,
-                        ),
-                      )
-                    ]),
-                  ),
+                    ),
+                  ]),
                 ),
-              )
-            ],
+              ),
+            ]),
           ),
         ),
       ),
