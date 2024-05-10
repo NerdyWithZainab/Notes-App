@@ -46,8 +46,8 @@ class _RegisterViewState extends State<RegisterView> {
         context: context as BuildContext,
         builder: (BuildContext context) {
           return const AlertDialog(
-            title: Text('Login Successful'),
-            content: Text('You have successfully logged in.'),
+            title: Text('Registration Successful'),
+            content: Text('You have successfully registered in.'),
           );
         },
       );
@@ -136,16 +136,19 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 40.0,
+                      horizontal: 60.0,
+                      vertical: 60.0,
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           context.loc.register_view_prompt,
                           style: const TextStyle(
                               fontSize: 20, color: Colors.white),
+                        ),
+                        const SizedBox(
+                          height: 20,
                         ),
                         TextField(
                           controller: _email,

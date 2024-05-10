@@ -13,6 +13,7 @@ import 'package:notes/services/cloud/firebase_cloud_storage.dart';
 import 'package:notes/utilities/dialogs/logout_dialog.dart';
 import 'package:notes/views/notes_list_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+import 'package:path/path.dart';
 
 extension Count<T extends Iterable> on Stream<T> {
   Stream<int> get getLength => map((event) => event.length);
@@ -38,34 +39,26 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Center(
-            child: StreamBuilder(
-                stream: _notesService.allNotes(ownerUserId: userId).getLength,
-                builder: (context, AsyncSnapshot<int> snapshot) {
-                  if (snapshot.hasData) {
-                    final noteCount = snapshot.data ?? 0;
-                    final text = context.loc.notes_title(noteCount);
-                    return Text(text,
-                        style: const TextStyle(color: Colors.white));
-                  } else {
-                    return const Text('');
-                  }
-                })),
+          child: StreamBuilder(
+              stream: _notesService.allNotes(ownerUserId: userId).getLength,
+              builder: (context, AsyncSnapshot<int> snapshot) {
+                if (snapshot.hasData) {
+                  final noteCount = snapshot.data ?? 0;
+                  final text = context.loc.notes_title(noteCount);
+                  return Text(text,
+                      style: const TextStyle(color: Colors.white));
+                } else {
+                  return const Text('');
+                }
+              }),
+        ),
         backgroundColor: Colors.deepPurple.shade600,
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
-            },
-            icon: const Icon(Icons.add),
-            color: Colors.white,
-          ),
           PopupMenuButton<MenuAction>(
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (value) async {
               switch (value) {
                 case MenuAction.logout:
@@ -92,18 +85,22 @@ class _NotesViewState extends State<NotesView> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.purple,
+        color: Colors.deepPurple.shade600,
         child: Row(
           children: <Widget>[
             IconButton(
                 onPressed: () {},
+                color: Colors.white60,
                 icon: const Icon(
                   Icons.folder,
                   size: 40,
                 )),
             const Spacer(),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
+              },
+              color: Colors.white60,
               icon: const Icon(
                 Icons.note_alt,
                 size: 40,

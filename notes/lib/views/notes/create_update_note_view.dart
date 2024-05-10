@@ -5,7 +5,6 @@ import 'package:notes/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:notes/utilities/generics/get_arguments.dart';
 import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/services/cloud/firebase_cloud_storage.dart';
-import 'package:path/path.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
@@ -94,6 +93,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
@@ -124,15 +124,16 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
               case ConnectionState.done:
                 _setupTextControllerListener();
                 return TextField(
+                  style: const TextStyle(color: Colors.white),
                   controller: _textController,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   decoration: InputDecoration(
-                    hintText: context.loc.start_typing_your_note,
-                  ),
+                      hintText: context.loc.start_typing_your_note,
+                      hintStyle: const TextStyle(color: Colors.white)),
                 );
               default:
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
             }
           }),
     );
