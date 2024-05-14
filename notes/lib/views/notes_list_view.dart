@@ -16,39 +16,41 @@ class NotesListView extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: notes.length,
-      itemBuilder: (context, index) {
-        final note = notes.elementAt(index);
-        return Dismissible(
-          key: Key(note.id.toString()),
-          direction: DismissDirection.endToStart,
-          onDismissed: (direction) {
-            onDeleteNote(note);
-          },
-          confirmDismiss: ((direction) async {
-            return await showDeleteDialog(context);
-          }),
-          background: Container(
-            color: Colors.red,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            alignment: Alignment.centerRight,
-            child: const Icon(Icons.delete_outline),
-          ),
-          child: ListTile(
-            onTap: () {
-              onTap(note);
+    return Align(
+      child: ListView.builder(
+        itemCount: notes.length,
+        itemBuilder: (context, index) {
+          final note = notes.elementAt(index);
+          return Dismissible(
+            key: Key(note.id.toString()),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              onDeleteNote(note);
             },
-            title: Text(
-              style: const TextStyle(color: Colors.white),
-              note.text,
-              maxLines: 1,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
+            confirmDismiss: ((direction) async {
+              return await showDeleteDialog(context);
+            }),
+            background: Container(
+              color: Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              alignment: Alignment.centerRight,
+              child: const Icon(Icons.delete_outline),
             ),
-          ),
-        );
-      },
+            child: ListTile(
+              onTap: () {
+                onTap(note);
+              },
+              title: Text(
+                style: const TextStyle(color: Colors.white),
+                note.text,
+                maxLines: 1,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
