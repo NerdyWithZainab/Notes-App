@@ -85,27 +85,31 @@ class _NotesViewState extends State<NotesView> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.deepPurple.shade600,
-        child: Row(
-          children: <Widget>[
-            IconButton(
-                onPressed: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                  onPressed: () {},
+                  color: Colors.white60,
+                  icon: const Icon(
+                    Icons.folder,
+                    size: 40,
+                  )),
+              const Spacer(),
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
+                },
                 color: Colors.white60,
                 icon: const Icon(
-                  Icons.folder,
+                  Icons.note_alt,
                   size: 40,
-                )),
-            const Spacer(),
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
-              },
-              color: Colors.white60,
-              icon: const Icon(
-                Icons.note_alt,
-                size: 40,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       body: StreamBuilder(
@@ -131,11 +135,11 @@ class _NotesViewState extends State<NotesView> {
                     },
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
 
               default:
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
             }
           }),
     );
