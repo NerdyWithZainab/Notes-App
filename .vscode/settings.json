@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "C:/Users/zaina/Desktop/Computer Science Projects/Notes-App/notes/linux"
+    "cmake.sourceDirectory": "C:/Users/zaina/Desktop/Computer Science Projects/Notes-App/notes/linux",
+    "cmake.ignoreCMakeListsMissing": true,
+    "jdk.advanced.disable.nbjavac": false
 }
