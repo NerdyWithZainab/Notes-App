@@ -91,7 +91,10 @@ class _NotesViewState extends State<NotesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed('/folders'); // Navigate to FolderViewScreen
+                  },
                   color: Colors.white60,
                   icon: const Icon(
                     Icons.folder,
