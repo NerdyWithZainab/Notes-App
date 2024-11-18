@@ -6,11 +6,12 @@ import 'package:notes/services/auth/bloc/auth_bloc.dart';
 import 'package:notes/services/auth/bloc/auth_event.dart';
 import 'package:notes/services/auth/bloc/auth_state.dart';
 import 'package:notes/services/auth/firebase_auth_provider.dart';
-import 'package:notes/views/forgot_pasword_view.dart';
+import 'package:notes/views/folder_view_screen.dart';
+import 'package:notes/views/forgot_password_view.dart';
+
 import 'package:notes/views/login_view.dart';
 import 'package:notes/views/notes/create_update_note_view.dart';
 
-import 'package:notes/views/notes/folder_view_screen.dart';
 import 'package:notes/views/notes/notes_view.dart';
 import 'package:notes/views/register_view.dart';
 import 'package:notes/views/verify_email_view.dart';
