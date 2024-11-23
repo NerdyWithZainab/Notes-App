@@ -20,17 +20,15 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
-
- apply plugin: 'com.android.application'
- apply plugin: 'kotlin-android'
- apply plugin:'com.google.gms.google-services'
-
- 
- apply from:"$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin:'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services' 
+apply from:"$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
  
 
 android {
-    compileSdkVersion flutter.sdk.compileSdkVersion
+    namespace "com.notes.notes"
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -51,8 +49,8 @@ android {
         applicationId "com.notes.notes"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.sdk.minSdkVersion
-        targetSdkVersion flutter.sdk.targetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -67,9 +65,6 @@ android {
     }
 }
 
-flutter {
-    source '../..'
-}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
