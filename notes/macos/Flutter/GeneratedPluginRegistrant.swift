@@ -12,7 +12,7 @@ import firebase_core
 import google_sign_in_ios
 import path_provider_foundation
 import share_plus
-import sqflite
+import sqflite_darwin
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseFirestorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseFirestorePlugin"))
