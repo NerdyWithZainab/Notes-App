@@ -1,5 +1,5 @@
 // This displays the Login screen for authentication
-import 'package:animated_text_kit/animated_text_kit.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/extensions/buildcontext/loc.dart';
@@ -96,175 +96,167 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         backgroundColor: Colors.black,
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: Theme(
             data: ThemeData(
                 inputDecorationTheme: const InputDecorationTheme(
               errorStyle: TextStyle(color: Colors.white),
             )),
-            child: Column(children: [
-              Expanded(
-                flex: 2,
-                child: Center(
-                  child: AnimatedTextKit(
-                    animatedTexts: [
-                      ColorizeAnimatedText(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Text(
                         'Capture',
-                        textStyle: GoogleFonts.robotoSlab(
-                          fontSize: 100.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        colors: [
-                          Colors.purple,
-                          Colors.blue,
-                          Colors.yellow,
-                          Colors.red
-                        ],
-                        speed: const Duration(milliseconds: 400),
+                        style: GoogleFonts.lavishlyYours(
+                            textStyle: const TextStyle(
+                                fontSize: 100,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                       ),
-                    ],
-                    repeatForever: true,
-                    isRepeatingAnimation: true,
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.purple,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(_isLoggingIn ? 0 : 30),
-                    topRight: Radius.circular(_isLoggingIn ? 0 : 30),
-                    bottomLeft: const Radius.circular(30),
-                    bottomRight: const Radius.circular(30),
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 40.0),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    const Text(
-                      "Login your account",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.purple,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(_isLoggingIn ? 0 : 30),
+                        topRight: Radius.circular(_isLoggingIn ? 0 : 30),
+                        bottomLeft: Radius.zero,
+                        bottomRight: Radius.zero,
                       ),
                     ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    TextField(
-                      controller: _email,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: context.loc.email_text_field_placeholder,
-                        errorText: _emailError,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0)),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: Colors.black, width: 2.0),
-                          borderRadius:
-                              BorderRadius.circular(_isLoggingIn ? 0 : 50),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _password,
-                      obscureText: _obscureText,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 40.0),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        const Text(
+                          "Login your account",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24.0,
                           ),
-                          focusedBorder: OutlineInputBorder(
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        TextField(
+                          controller: _email,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: context.loc.email_text_field_placeholder,
+                            errorText: _emailError,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0)),
+                            focusedBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
                                   color: Colors.black, width: 2.0),
                               borderRadius:
-                                  BorderRadius.circular(_isLoggingIn ? 0 : 50)),
-                          hintText: context.loc.password_text_field_placeholder,
-                          errorText: _passwordError,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscureText
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.black,
+                                  BorderRadius.circular(_isLoggingIn ? 0 : 50),
                             ),
-                            onPressed: () {
-                              setState(
-                                () {
-                                  _obscureText = !_obscureText;
-                                },
-                              );
-                            },
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: TextButton(
-                        onPressed: _signInWithEmailAndPassword,
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                        ),
-                        child: Text(context.loc.login),
-                      ),
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white),
-                      onPressed: () {
-                        context.read<AuthBloc>().add(
-                              const AuthEventForgotPassword(email: ''),
-                            );
-                      },
-                      child: Text(context.loc.forgot_password),
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white),
-                      onPressed: () {
-                        context.read<AuthBloc>().add(
-                              const AuthEventShouldRegister(),
-                            );
-                      },
-                      child: Text(
-                        context.loc.login_view_not_registered_yet,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: TextButton(
-                        onPressed: _signInWithGoogle,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50.0),
-                          child: Image.asset(
-                            'assets/icon/google.png',
-                            width: 50,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: _password,
+                          obscureText: _obscureText,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.black, width: 2.0),
+                                  borderRadius: BorderRadius.circular(
+                                      _isLoggingIn ? 0 : 50)),
+                              hintText:
+                                  context.loc.password_text_field_placeholder,
+                              errorText: _passwordError,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureText
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () {
+                                  setState(
+                                    () {
+                                      _obscureText = !_obscureText;
+                                    },
+                                  );
+                                },
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: TextButton(
+                            onPressed: _signInWithEmailAndPassword,
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white,
+                            ),
+                            child: Text(context.loc.login),
+                          ),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white),
+                          onPressed: () {
+                            context.read<AuthBloc>().add(
+                                  const AuthEventForgotPassword(email: ''),
+                                );
+                          },
+                          child: Text(context.loc.forgot_password),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white),
+                          onPressed: () {
+                            context.read<AuthBloc>().add(
+                                  const AuthEventShouldRegister(),
+                                );
+                          },
+                          child: Text(
+                            context.loc.login_view_not_registered_yet,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: TextButton(
+                            onPressed: _signInWithGoogle,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Image.asset(
+                                'assets/icon/google.png',
+                                width: 50,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ]),
                     ),
-                  ]),
-                ),
-              ),
-            ]),
+                  ),
+                ]),
           ),
         ),
       ),
