@@ -123,15 +123,24 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
                 _setupTextControllerListener();
-                return TextField(
-                  style: const TextStyle(color: Colors.white),
-                  controller: _textController,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                      hintText: context.loc.start_typing_your_note,
-                      hintStyle: const TextStyle(color: Colors.white)),
-                );
+                return SingleChildScrollView(
+                    child: Container(
+                        height: MediaQuery.of(context).size.height,
+                        padding: const EdgeInsets.all(16),
+                        child: TextField(
+                          style: const TextStyle(color: Colors.white),
+                          controller: _textController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines:
+                              null, // Allows the TextField to expand infinitely
+                          expands: true, // Expands to fill the available space
+                          decoration: InputDecoration(
+                            hintText: context.loc.start_typing_your_note,
+                            hintStyle: const TextStyle(color: Colors.white),
+                            border:
+                                InputBorder.none, // Remove the default border
+                          ),
+                        )));
               default:
                 return const Center(child: CircularProgressIndicator());
             }
