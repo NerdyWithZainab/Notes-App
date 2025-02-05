@@ -96,27 +96,14 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               child: Column(children: [
                 Expanded(
-                  flex: 2,
                   child: Center(
-                    child: AnimatedTextKit(
-                      animatedTexts: [
-                        ColorizeAnimatedText(
-                          'Capture',
-                          textStyle: GoogleFonts.robotoSlab(
-                            fontSize: 100.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          colors: [
-                            Colors.purple,
-                            Colors.blue,
-                            Colors.yellow,
-                            Colors.red
-                          ],
-                          speed: const Duration(milliseconds: 400),
-                        ),
-                      ],
-                      repeatForever: true,
-                      isRepeatingAnimation: true,
+                    child: Text(
+                      'Capture',
+                      style: GoogleFonts.lavishlyYours(
+                          textStyle: const TextStyle(
+                              fontSize: 100,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
                     ),
                   ),
                 ),
