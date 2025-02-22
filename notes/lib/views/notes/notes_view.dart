@@ -11,8 +11,33 @@ import 'package:notes/services/auth/bloc/auth_event.dart';
 import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/services/cloud/firebase_cloud_storage.dart';
 import 'package:notes/utilities/dialogs/logout_dialog.dart';
+import 'package:notes/views/login_view.dart';
 import 'package:notes/views/notes_list_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+Future<UserCredential?> signInWithGoogle() async {
+  try {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      return null; // User canceled sign-in
+    }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  } catch (e) {
+    print('Google Sign-In Error: $e');
+    return null;
+  }
+}
 
 extension Count<T extends Iterable> on Stream<T> {
   Stream<int> get getLength => map((event) => event.length);
@@ -27,12 +52,42 @@ class NotesView extends StatefulWidget {
 
 class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
-  String get userId => AuthService.firebase().currentUser!.id;
+  String? _userId;
 
   @override
   void initState() {
     _notesService = FirebaseCloudStorage();
     super.initState();
+    _initializeUser();
+  }
+
+  void _initializeUser() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      setState(() {
+        _userId = user.uid;
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed(loginRoute);
+      });
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    final shouldLogout = await showLogOutDialog(context);
+    if (shouldLogout) {
+      await AuthService.firebase().logOut();
+      await GoogleSignIn().signOut();
+
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginView()),
+          (route) => false,
+        );
+      }
+    }
   }
 
   @override
@@ -42,7 +97,9 @@ class _NotesViewState extends State<NotesView> {
       appBar: AppBar(
         title: Center(
           child: StreamBuilder(
-              stream: _notesService.allNotes(ownerUserId: userId).getLength,
+              stream: _userId == null
+                  ? const Stream<int>.empty()
+                  : _notesService.allNotes(ownerUserId: _userId!).getLength,
               builder: (context, AsyncSnapshot<int> snapshot) {
                 if (snapshot.hasData) {
                   final noteCount = snapshot.data ?? 0;
@@ -116,7 +173,7 @@ class _NotesViewState extends State<NotesView> {
         ),
       ),
       body: StreamBuilder(
-          stream: _notesService.allNotes(ownerUserId: userId),
+          stream: _notesService.allNotes(ownerUserId: _userId!),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
