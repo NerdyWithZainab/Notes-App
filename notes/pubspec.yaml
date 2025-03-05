@@ -84,8 +84,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
      - assets/icon/google.png 
-
 flutter_gen:
+    output: lib/gen/
+    synthetic-package: false
     integrations: 
       flutter_localizations: true
   # An image asset can refer to one or more resolution-specific "variants", see
