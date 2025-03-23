@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head> 
   <meta name="google-signin-client_id" content="141842590435-hqutpjh19a80shi8mt4sla8himhevtls.apps.googleusercontent.com">
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -22,7 +22,7 @@
   <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="notes">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -37,24 +37,11 @@
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = "{{flutter_service_worker_version}}";
   </script>
-  <!-- This script adds the flutter initialization JS code -->
+  <!-- This script adds the flutter initialization JS code --> 
   <script src="flutter.js" defer></script>
 </head>
 <body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.load({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
-    });
-  </script>
-</body>
+  <body>
+    <script src="flutter_bootstrap.js" async></script>
+  </body>
 </html>

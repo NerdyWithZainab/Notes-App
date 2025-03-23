@@ -3,6 +3,8 @@ import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/utilities/dialogs/delete_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 typedef NoteCallback = void Function(CloudNote);
 
@@ -31,39 +33,64 @@ class NotesListViewState extends State<NotesListView> {
     _loadFolders();
   }
 
-  // Fetch the list of folders
+  // Fetch the list of folders (Web & Mobile)
   Future<void> _loadFolders() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final folderPath = Directory('${directory.path}/NotesFolders');
-
-    if (await folderPath.exists()) {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
       setState(() {
-        _folders = folderPath
-            .listSync()
-            .whereType<Directory>()
-            .map((dir) => dir.path.split('/').last)
-            .toList();
+        _folders = prefs.getStringList('folders') ?? [];
       });
     } else {
-      await folderPath.create();
+      final directory = await getApplicationDocumentsDirectory();
+      final folderPath = Directory('${directory.path}/NotesFolders');
+
+      if (await folderPath.exists()) {
+        setState(() {
+          _folders = folderPath
+              .listSync()
+              .whereType<Directory>()
+              .map((dir) => dir.path.split('/').last)
+              .toList();
+        });
+      } else {
+        await folderPath.create();
+      }
     }
   }
 
-  // Create a new folder
+  // Create a new folder (Web & Mobile)
   Future<void> _createFolder(String folderName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final newFolder = Directory('${directory.path}/NotesFolders/$folderName');
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      List<String> folders = prefs.getStringList('folders') ?? [];
 
-    if (await newFolder.exists()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Folder "$folderName" already exists!')),
-      );
+      if (!folders.contains(folderName)) {
+        folders.add(folderName);
+        await prefs.setStringList('folders', folders);
+        setState(() => _folders = folders);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Folder "$folderName" created!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Folder "$folderName" already exists!')),
+        );
+      }
     } else {
-      await newFolder.create();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Folder "$folderName" created!')),
-      );
-      _loadFolders();
+      final directory = await getApplicationDocumentsDirectory();
+      final newFolder = Directory('${directory.path}/NotesFolders/$folderName');
+
+      if (await newFolder.exists()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Folder "$folderName" already exists!')),
+        );
+      } else {
+        await newFolder.create();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Folder "$folderName" created!')),
+        );
+        _loadFolders();
+      }
     }
   }
 
@@ -150,7 +177,6 @@ class NotesListViewState extends State<NotesListView> {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
-                                  // Implement folder selection logic here
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
