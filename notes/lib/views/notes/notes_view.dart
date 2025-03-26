@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/constants/routes.dart';
 import 'package:notes/enums/menu_action.dart';
 import 'package:notes/extensions/buildcontext/loc.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:notes/services/auth/auth_service.dart';
-import 'package:notes/services/auth/bloc/auth_bloc.dart';
-import 'package:notes/services/auth/bloc/auth_event.dart';
-import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/services/cloud/firebase_cloud_storage.dart';
 import 'package:notes/utilities/dialogs/logout_dialog.dart';
 import 'package:notes/views/login_view.dart';
 import 'package:notes/views/notes_list_view.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -39,7 +32,7 @@ Future<UserCredential?> signInWithGoogle() async {
   }
 }
 
-extension Count<T extends Iterable> on Stream<T> {
+extension Count<T extends Iterable<dynamic>> on Stream<T> {
   Stream<int> get getLength => map((event) => event.length);
 }
 
@@ -63,7 +56,6 @@ class _NotesViewState extends State<NotesView> {
 
   void _initializeUser() {
     final user = FirebaseAuth.instance.currentUser;
-
     if (user != null) {
       setState(() {
         _userId = user.uid;
@@ -96,38 +88,28 @@ class _NotesViewState extends State<NotesView> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Center(
-          child: StreamBuilder(
-              stream: _userId == null
-                  ? const Stream<int>.empty()
-                  : _notesService.allNotes(ownerUserId: _userId!).getLength,
-              builder: (context, AsyncSnapshot<int> snapshot) {
-                if (snapshot.hasData) {
-                  final noteCount = snapshot.data ?? 0;
-                  final text = context.loc.notes_title(noteCount);
-                  return Text(text,
-                      style: const TextStyle(color: Colors.white));
-                } else {
-                  return const Text('');
-                }
-              }),
+          child: _userId == null
+              ? const Text('')
+              : StreamBuilder<int>(
+                  stream:
+                      _notesService.allNotes(ownerUserId: _userId!).getLength,
+                  builder: (context, snapshot) {
+                    final noteCount = snapshot.data ?? 0;
+                    return Text(
+                      context.loc.notes_title(noteCount),
+                      style: const TextStyle(color: Colors.white),
+                    );
+                  },
+                ),
         ),
         backgroundColor: Colors.deepPurple.shade600,
         actions: [
           PopupMenuButton<MenuAction>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (value) async {
-              switch (value) {
-                case MenuAction.logout:
-                  final shouldLogout = await showLogOutDialog(context);
-                  if (shouldLogout) {
-                    context.read<AuthBloc>().add(const AuthEventLogOut());
-                    // ignore: use_build_context_synchronously
-                  }
-
-                  devtools.log(shouldLogout.toString());
-                  break;
+              if (value == MenuAction.logout) {
+                await _handleLogout();
               }
-              devtools.log(value.toString());
             },
             itemBuilder: (context) {
               return [
@@ -148,15 +130,15 @@ class _NotesViewState extends State<NotesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed('/folders'); // Navigate to FolderViewScreen
-                  },
-                  color: Colors.white60,
-                  icon: const Icon(
-                    Icons.folder,
-                    size: 40,
-                  )),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/folders');
+                },
+                color: Colors.white60,
+                icon: const Icon(
+                  Icons.folder,
+                  size: 40,
+                ),
+              ),
               const Spacer(),
               IconButton(
                 onPressed: () {
@@ -172,36 +154,44 @@ class _NotesViewState extends State<NotesView> {
           ),
         ),
       ),
-      body: StreamBuilder(
-          stream: _notesService.allNotes(ownerUserId: _userId!),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.active:
-                if (snapshot.hasData) {
-                  final allNotes = snapshot.data as Iterable<CloudNote>;
-                  return NotesListView(
-                    notes: allNotes,
-                    onDeleteNote: (note) async {
-                      await _notesService.deleteNote(
-                        documentId: note.documentId,
-                      );
-                    },
-                    onTap: (note) {
-                      Navigator.of(context).pushNamed(
-                        createOrUpdateNoteRoute,
-                        arguments: note,
-                      );
-                    },
-                  );
+      body: _userId == null
+          ? const Center(child: CircularProgressIndicator())
+          : StreamBuilder<Iterable<CloudNote>>(
+              stream: _notesService.allNotes(ownerUserId: _userId!)
+                  as Stream<Iterable<CloudNote>>?,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    snapshot.connectionState == ConnectionState.active) {
+                  if (snapshot.hasData) {
+                    final allNotes = snapshot.data!.toList();
+                    return NotesListView(
+                      notes: allNotes,
+                      onDeleteNote: (note) async {
+                        await _notesService.deleteNote(
+                          documentId: note.documentId,
+                        );
+                      },
+                      onTap: (note) {
+                        Navigator.of(context).pushNamed(
+                          createOrUpdateNoteRoute,
+                          arguments: note,
+                        );
+                      },
+                      onPinNote: (note) async {
+                        await _notesService.updateNotePinStatus(
+                          documentId: note.documentId,
+                          isPinned: !note.isPinned, // Toggle pin status
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                 } else {
                   return const Center(child: CircularProgressIndicator());
                 }
-
-              default:
-                return const Center(child: CircularProgressIndicator());
-            }
-          }),
+              },
+            ),
     );
   }
 }

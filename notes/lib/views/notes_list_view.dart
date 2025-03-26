@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/utilities/dialogs/delete_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -8,16 +7,40 @@ import 'package:flutter/foundation.dart';
 
 typedef NoteCallback = void Function(CloudNote);
 
+class CloudNote {
+  final String id;
+  final String text;
+  final bool isPinned;
+
+  CloudNote({
+    required this.id,
+    required this.text,
+    this.isPinned = false,
+  });
+
+  get documentId => null;
+
+  CloudNote copyWith({bool? isPinned}) {
+    return CloudNote(
+      id: id,
+      text: text,
+      isPinned: isPinned ?? this.isPinned,
+    );
+  }
+}
+
 class NotesListView extends StatefulWidget {
-  final Iterable<CloudNote> notes;
+  final List<CloudNote> notes;
   final NoteCallback onDeleteNote;
   final NoteCallback onTap;
+  final Function(CloudNote) onPinNote;
 
   const NotesListView({
     super.key,
     required this.notes,
     required this.onDeleteNote,
     required this.onTap,
+    required this.onPinNote,
   });
 
   @override
@@ -33,7 +56,6 @@ class NotesListViewState extends State<NotesListView> {
     _loadFolders();
   }
 
-  // Fetch the list of folders (Web & Mobile)
   Future<void> _loadFolders() async {
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
@@ -58,7 +80,6 @@ class NotesListViewState extends State<NotesListView> {
     }
   }
 
-  // Create a new folder (Web & Mobile)
   Future<void> _createFolder(String folderName) async {
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
@@ -96,6 +117,9 @@ class NotesListViewState extends State<NotesListView> {
 
   @override
   Widget build(BuildContext context) {
+    List<CloudNote> sortedNotes = List.from(widget.notes)
+      ..sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -108,13 +132,10 @@ class NotesListViewState extends State<NotesListView> {
               decoration: BoxDecoration(
                 color: Colors.grey,
                 border: Border.all(color: Colors.deepPurple.shade700),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(20),
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
               child: Column(
                 children: [
-                  // Add button to create a folder
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -164,13 +185,11 @@ class NotesListViewState extends State<NotesListView> {
                       ),
                     ],
                   ),
-
-                  // Display folders
                   _folders.isEmpty
                       ? const Text("No folders available",
                           style: TextStyle(color: Colors.white))
                       : SizedBox(
-                          height: 100, // Limit folder list height
+                          height: 100,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: _folders.length,
@@ -208,45 +227,55 @@ class NotesListViewState extends State<NotesListView> {
                             },
                           ),
                         ),
-
                   const Divider(color: Colors.white),
-
-                  // Notes list
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: widget.notes.map((note) {
-                          return Dismissible(
-                            key: Key(note.id.toString()),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (direction) {
-                              widget.onDeleteNote(note);
+                    child: ListView.builder(
+                      itemCount: sortedNotes.length,
+                      itemBuilder: (context, index) {
+                        final note = sortedNotes[index];
+                        return Dismissible(
+                          key: Key(note.id),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            widget.onDeleteNote(note);
+                          },
+                          confirmDismiss: (direction) async {
+                            return await showDeleteDialog(context);
+                          },
+                          background: Container(
+                            color: Colors.red,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            alignment: Alignment.centerRight,
+                            child: const Icon(Icons.delete_outline),
+                          ),
+                          child: ListTile(
+                            onTap: () {
+                              widget.onTap(note);
                             },
-                            confirmDismiss: (direction) async {
-                              return await showDeleteDialog(context);
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              alignment: Alignment.centerRight,
-                              child: const Icon(Icons.delete_outline),
+                            title: Text(
+                              note.text,
+                              style: const TextStyle(color: Colors.white),
+                              maxLines: 1,
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            child: ListTile(
-                              onTap: () {
-                                widget.onTap(note);
-                              },
-                              title: Text(
-                                note.text,
-                                style: const TextStyle(color: Colors.white),
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
+                            trailing: IconButton(
+                              icon: Icon(
+                                note.isPinned
+                                    ? Icons.push_pin
+                                    : Icons.push_pin_outlined,
+                                color: note.isPinned
+                                    ? Colors.yellow
+                                    : Colors.white,
                               ),
+                              onPressed: () {
+                                widget.onPinNote(
+                                    note.copyWith(isPinned: !note.isPinned));
+                              },
                             ),
-                          );
-                        }).toList(),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
