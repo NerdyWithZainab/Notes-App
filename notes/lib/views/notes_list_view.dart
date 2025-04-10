@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notes/config.dart';
 import 'package:notes/utilities/dialogs/delete_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 typedef NoteCallback = void Function(CloudNote);
 
@@ -27,6 +30,27 @@ class CloudNote {
       isPinned: isPinned ?? this.isPinned,
     );
   }
+}
+
+// Function to translate a note's text using a Flask server
+Future<String?> translateText(String originalText) async {
+  try {
+    final response = await http.post(
+      Uri.parse(translateEndpoint), // Change this
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'text': originalText}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return jsonData['translated_text'];
+    } else {
+      print("Translation failed: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Error during translation: $e");
+  }
+  return null;
 }
 
 class NotesListView extends StatefulWidget {
@@ -134,154 +158,198 @@ class NotesListViewState extends State<NotesListView> {
                 border: Border.all(color: Colors.deepPurple.shade700),
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Folders",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.create_new_folder,
-                            color: Colors.white),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              String newFolderName = '';
-                              return AlertDialog(
-                                title: const Text("Create Folder"),
-                                content: TextField(
-                                  onChanged: (value) {
-                                    newFolderName = value;
-                                  },
-                                  decoration: const InputDecoration(
-                                    hintText: "Enter folder name",
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Cancel"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      if (newFolderName.isNotEmpty) {
-                                        _createFolder(newFolderName);
-                                        Navigator.of(context).pop();
-                                      }
-                                    },
-                                    child: const Text("Create"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  _folders.isEmpty
-                      ? const Text("No folders available",
-                          style: TextStyle(color: Colors.white))
-                      : SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _folders.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Opened folder: ${_folders[index]}')),
-                                  );
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Folders",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.create_new_folder,
+                          color: Colors.white),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            String newFolderName = '';
+                            return AlertDialog(
+                              title: const Text("Create Folder"),
+                              content: TextField(
+                                onChanged: (value) {
+                                  newFolderName = value;
                                 },
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(Icons.folder,
-                                          color: Colors.white, size: 40),
-                                      Text(
-                                        _folders[index],
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
+                                decoration: const InputDecoration(
+                                  hintText: "Enter folder name",
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                  const Divider(color: Colors.white),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: sortedNotes.length,
-                      itemBuilder: (context, index) {
-                        final note = sortedNotes[index];
-                        return Dismissible(
-                          key: Key(note.id),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (direction) {
-                            widget.onDeleteNote(note);
-                          },
-                          confirmDismiss: (direction) async {
-                            return await showDeleteDialog(context);
-                          },
-                          background: Container(
-                            color: Colors.red,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            alignment: Alignment.centerRight,
-                            child: const Icon(Icons.delete_outline),
-                          ),
-                          child: ListTile(
-                            onTap: () {
-                              widget.onTap(note);
-                            },
-                            title: Text(
-                              note.text,
-                              style: const TextStyle(color: Colors.white),
-                              maxLines: 1,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(
-                                note.isPinned
-                                    ? Icons.push_pin
-                                    : Icons.push_pin_outlined,
-                                color: note.isPinned
-                                    ? Colors.yellow
-                                    : Colors.white,
                               ),
-                              onPressed: () {
-                                widget.onPinNote(
-                                    note.copyWith(isPinned: !note.isPinned));
-                              },
-                            ),
-                          ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    if (newFolderName.isNotEmpty) {
+                                      _createFolder(newFolderName);
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  child: const Text("Create"),
+                                ),
+                              ],
+                            );
+                          },
                         );
                       },
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                _folders.isEmpty
+                    ? const Text("No folders available",
+                        style: TextStyle(color: Colors.white))
+                    : SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _folders.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Opened folder: ${_folders[index]}')),
+                                );
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.folder,
+                                        color: Colors.white, size: 40),
+                                    Text(
+                                      _folders[index],
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                const Divider(color: Colors.white),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: sortedNotes.length,
+                        itemBuilder: (context, index) {
+                          final note = sortedNotes[index];
+                          return Dismissible(
+                              key: Key(note.id),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (direction) {
+                                widget.onDeleteNote(note);
+                              },
+                              confirmDismiss: (direction) async {
+                                return await showDeleteDialog(context);
+                              },
+                              background: Container(
+                                color: Colors.red,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                alignment: Alignment.centerRight,
+                                child: const Icon(Icons.delete_outline),
+                              ),
+                              child: ListTile(
+                                onTap: () {
+                                  widget.onTap(note);
+                                },
+                                title: Text(
+                                  note.text,
+                                  style: const TextStyle(color: Colors.white),
+                                  maxLines: 1,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                trailing: Wrap(
+                                  spacing: 12,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        note.isPinned
+                                            ? Icons.push_pin
+                                            : Icons.push_pin_outlined,
+                                        color: note.isPinned
+                                            ? Colors.yellow
+                                            : Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        widget.onPinNote(note.copyWith(
+                                            isPinned: !note.isPinned));
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.translate,
+                                          color: Colors.white),
+                                      onPressed: () async {
+                                        final translated =
+                                            await translateText(note.text);
+                                        if (translated != null) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                backgroundColor: Colors.black,
+                                                title: const Text(
+                                                    'Translated Text',
+                                                    style: TextStyle(
+                                                        color: Colors.white)),
+                                                content: Text(translated,
+                                                    style: const TextStyle(
+                                                        color: Colors.white)),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                    child: const Text('Close',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .purpleAccent)),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    "Translation failed!")),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ));
+                        }))
+              ]),
             ),
-          ),
+          )
         ],
       ),
     );
