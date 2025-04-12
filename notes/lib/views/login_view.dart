@@ -125,7 +125,7 @@ class _LoginViewState extends State<LoginView> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      color: Colors.purple,
+                      color: Colors.white.withAlpha(200),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(_isLoggingIn ? 0 : 30),
                         topRight: Radius.circular(_isLoggingIn ? 0 : 30),
