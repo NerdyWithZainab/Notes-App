@@ -9,6 +9,7 @@ import 'package:notes/views/login_view.dart';
 import 'package:notes/views/notes_list_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:notes/views/notes/kanban_board.dart';
 
 Future<UserCredential?> signInWithGoogle() async {
   try {
@@ -46,6 +47,22 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
   String? _userId;
+// Create a Kanban Board feature
+  Future<void> _openKanbanView() async {
+    if (_userId == null) return;
+    final notesSnapshot =
+        await _notesService.allNotes(ownerUserId: _userId!).first;
+    final notes = notesSnapshot.toList();
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => KanbanBoardScreen(
+          notes: notes,
+          onTap: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -122,6 +139,12 @@ class _NotesViewState extends State<NotesView> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openKanbanView,
+        backgroundColor: Colors.deepPurple.shade600,
+        child: const Icon(Icons.view_kanban),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         color: Colors.deepPurple.shade600,
         child: Padding(

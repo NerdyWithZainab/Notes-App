@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 
 typedef NoteCallback = void Function(CloudNote);
 
+enum NotesStatus { todo, inProgress, done }
+
 class CloudNote {
   final String id;
   final String text;
