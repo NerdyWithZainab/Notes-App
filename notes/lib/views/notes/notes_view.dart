@@ -10,6 +10,7 @@ import 'package:notes/views/notes_list_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/views/notes/kanban_board.dart';
+import 'package:notes/calender/calendar_screen.dart';
 
 Future<UserCredential?> signInWithGoogle() async {
   try {
@@ -140,15 +141,21 @@ class _NotesViewState extends State<NotesView> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _openKanbanView,
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const CalendarScreen()),
+          );
+        },
         backgroundColor: Colors.deepPurple.shade600,
-        child: const Icon(Icons.view_kanban),
+        child: const Icon(Icons.calendar_today),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6.0,
         color: Colors.deepPurple.shade600,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -159,10 +166,18 @@ class _NotesViewState extends State<NotesView> {
                 color: Colors.white60,
                 icon: const Icon(
                   Icons.folder,
-                  size: 40,
+                  size: 30,
                 ),
               ),
-              const Spacer(),
+              IconButton(
+                onPressed: _openKanbanView,
+                color: Colors.white60,
+                icon: const Icon(
+                  Icons.view_kanban,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(width: 48), // Space for FAB
               IconButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
@@ -170,7 +185,17 @@ class _NotesViewState extends State<NotesView> {
                 color: Colors.white60,
                 icon: const Icon(
                   Icons.note_alt,
-                  size: 40,
+                  size: 30,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  // Add another action here if needed
+                },
+                color: Colors.white60,
+                icon: const Icon(
+                  Icons.settings,
+                  size: 30,
                 ),
               ),
             ],
