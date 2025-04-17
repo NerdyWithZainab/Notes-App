@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notes/config.dart';
 import 'package:notes/utilities/dialogs/delete_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -7,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:notes/config.dart';
 
 typedef NoteCallback = void Function(CloudNote);
 
