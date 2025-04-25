@@ -1,4 +1,4 @@
-// This displays the Login screen for authentication
+// This displays the Login screen for authentication with glassmorphism effect
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +10,7 @@ import 'package:notes/services/auth/bloc/auth_state.dart';
 import 'package:notes/utilities/dialogs/error_dialog.dart';
 import '../utils/authentication.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui'; // Import for BackdropFilter
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -97,166 +98,327 @@ class _LoginViewState extends State<LoginView> {
       child: Scaffold(
         backgroundColor: Colors.black,
         resizeToAvoidBottomInset: true,
-        body: SafeArea(
-          child: Theme(
-            data: ThemeData(
-                inputDecorationTheme: const InputDecorationTheme(
-              errorStyle: TextStyle(color: Colors.white),
-            )),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Capture',
-                        style: GoogleFonts.lavishlyYours(
-                            textStyle: const TextStyle(
-                                fontSize: 100,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(200),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(_isLoggingIn ? 0 : 30),
-                        topRight: Radius.circular(_isLoggingIn ? 0 : 30),
-                        bottomLeft: Radius.zero,
-                        bottomRight: Radius.zero,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 40.0),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        const Text(
-                          "Login your account",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24.0,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20.0,
-                        ),
-                        TextField(
-                          controller: _email,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: context.loc.email_text_field_placeholder,
-                            errorText: _emailError,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0)),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.black, width: 2.0),
-                              borderRadius:
-                                  BorderRadius.circular(_isLoggingIn ? 0 : 50),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TextField(
-                          controller: _password,
-                          obscureText: _obscureText,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.black, width: 2.0),
-                                  borderRadius: BorderRadius.circular(
-                                      _isLoggingIn ? 0 : 50)),
-                              hintText:
-                                  context.loc.password_text_field_placeholder,
-                              errorText: _passwordError,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureText
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  setState(
-                                    () {
-                                      _obscureText = !_obscureText;
-                                    },
-                                  );
-                                },
-                              )),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: TextButton(
-                            onPressed: _signInWithEmailAndPassword,
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Colors.white,
-                            ),
-                            child: Text(context.loc.login),
-                          ),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Colors.white),
-                          onPressed: () {
-                            context.read<AuthBloc>().add(
-                                  const AuthEventForgotPassword(email: ''),
-                                );
-                          },
-                          child: Text(context.loc.forgot_password),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Colors.white),
-                          onPressed: () {
-                            context.read<AuthBloc>().add(
-                                  const AuthEventShouldRegister(),
-                                );
-                          },
+        body: Container(
+          // Add a background image or gradient here if desired
+          decoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+          child: SafeArea(
+            child: Theme(
+              data: ThemeData(
+                  inputDecorationTheme: const InputDecorationTheme(
+                errorStyle: TextStyle(color: Colors.white),
+              )),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Center(
                           child: Text(
-                            context.loc.login_view_not_registered_yet,
+                            'Capture',
+                            style: GoogleFonts.lavishlyYours(
+                                textStyle: const TextStyle(
+                                    fontSize: 100,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: TextButton(
-                            onPressed: _signInWithGoogle,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50.0),
-                              child: Image.asset(
-                                'assets/icon/google.png',
-                                width: 50,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      // Glassmorphism container
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 1.5,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 40.0),
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      "Login your account",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 20.0,
+                                    ),
+                                    // Inner glassmorphic content area
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 5, sigmaY: 5),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.white.withOpacity(0.15),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            border: Border.all(
+                                              color:
+                                                  Colors.white.withOpacity(0.2),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              TextField(
+                                                controller: _email,
+                                                enableSuggestions: false,
+                                                autocorrect: false,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                                decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: Colors.white
+                                                      .withOpacity(0.1),
+                                                  hintText: context.loc
+                                                      .email_text_field_placeholder,
+                                                  hintStyle: TextStyle(
+                                                      color: Colors.white
+                                                          .withOpacity(0.7)),
+                                                  errorText: _emailError,
+                                                  prefixIcon: const Icon(
+                                                      Icons.email,
+                                                      color: Colors.white70),
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50.0),
+                                                      borderSide:
+                                                          BorderSide.none),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white
+                                                            .withOpacity(0.5),
+                                                        width: 2.0),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white
+                                                            .withOpacity(0.2),
+                                                        width: 1.0),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              TextField(
+                                                controller: _password,
+                                                obscureText: _obscureText,
+                                                enableSuggestions: false,
+                                                autocorrect: false,
+                                                textInputAction:
+                                                    TextInputAction.done,
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                                decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: Colors.white
+                                                      .withOpacity(0.1),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                    borderSide: BorderSide.none,
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white
+                                                            .withOpacity(0.5),
+                                                        width: 2.0),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white
+                                                            .withOpacity(0.2),
+                                                        width: 1.0),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  hintText: context.loc
+                                                      .password_text_field_placeholder,
+                                                  hintStyle: TextStyle(
+                                                      color: Colors.white
+                                                          .withOpacity(0.7)),
+                                                  errorText: _passwordError,
+                                                  prefixIcon: const Icon(
+                                                      Icons.lock,
+                                                      color: Colors.white70),
+                                                  suffixIcon: IconButton(
+                                                    icon: Icon(
+                                                      _obscureText
+                                                          ? Icons.visibility
+                                                          : Icons
+                                                              .visibility_off,
+                                                      color: Colors.white70,
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(
+                                                        () {
+                                                          _obscureText =
+                                                              !_obscureText;
+                                                        },
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              ElevatedButton(
+                                                onPressed:
+                                                    _signInWithEmailAndPassword,
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: Colors.black,
+                                                  backgroundColor: Colors.white
+                                                      .withOpacity(0.9),
+                                                  minimumSize: const Size(
+                                                      double.infinity, 50),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                  ),
+                                                  elevation: 0,
+                                                ),
+                                                child: Text(
+                                                  context.loc.login,
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 15),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                    ),
+                                                    onPressed: () {
+                                                      context
+                                                          .read<AuthBloc>()
+                                                          .add(
+                                                            const AuthEventForgotPassword(
+                                                                email: ''),
+                                                          );
+                                                    },
+                                                    child: Text(context
+                                                        .loc.forgot_password),
+                                                  ),
+                                                  TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                    ),
+                                                    onPressed: () {
+                                                      context
+                                                          .read<AuthBloc>()
+                                                          .add(
+                                                            const AuthEventShouldRegister(),
+                                                          );
+                                                    },
+                                                    child: Text(
+                                                      context.loc
+                                                          .login_view_not_registered_yet,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const Text(
+                                      "OR",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    const SizedBox(height: 15),
+                                    ElevatedButton.icon(
+                                      onPressed: _signInWithGoogle,
+                                      icon: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        child: Image.asset(
+                                          'assets/icon/google.png',
+                                          width: 24,
+                                          height: 24,
+                                        ),
+                                      ),
+                                      label: const Text("Sign in with Google"),
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.black,
+                                        backgroundColor:
+                                            Colors.white.withOpacity(0.9),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 24),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                    ),
+                                  ]),
                             ),
                           ),
                         ),
-                      ]),
-                    ),
-                  ),
-                ]),
+                      ),
+                    ]),
+              ),
+            ),
           ),
         ),
       ),
@@ -279,11 +441,11 @@ class _LoginViewState extends State<LoginView> {
 
   // Signing in the user
   Future<void> _signInWithEmailAndPassword() async {
-    final email = _email.text;
-    final password = _password.text;
-    context.read<AuthBloc>().add(AuthEventLogIn(email, password));
     if (!_validateFields()) {
       return; // Prevent login attempt if validation fails
     }
+    final email = _email.text;
+    final password = _password.text;
+    context.read<AuthBloc>().add(AuthEventLogIn(email, password));
   }
 }
