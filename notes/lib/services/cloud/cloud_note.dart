@@ -39,4 +39,19 @@ class CloudNote {
       'isPinned': isPinned,
     };
   }
+
+  // Add copyWith method for immutability and easy updates
+  CloudNote copyWith({
+    String? documentId,
+    String? ownerUserId,
+    String? text,
+    bool? isPinned,
+  }) {
+    return CloudNote(
+      documentId: documentId ?? this.documentId,
+      ownerUserId: ownerUserId ?? this.ownerUserId,
+      text: text ?? this.text,
+      isPinned: isPinned ?? this.isPinned,
+    );
+  }
 }

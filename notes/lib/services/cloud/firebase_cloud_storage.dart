@@ -37,7 +37,7 @@ class FirebaseCloudStorage {
   }
 
   // ✅ Get all Notes for a User (Sorted by isPinned)
-  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) {
+  Stream<Iterable<CloudNote>>? allNotes({required String ownerUserId}) {
     return notes
         .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
         .snapshots()

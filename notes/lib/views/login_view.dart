@@ -305,7 +305,7 @@ class _LoginViewState extends State<LoginView> {
                                               ),
                                             ),
                                             const SizedBox(
-                                              height: 20,
+                                              height: 10,
                                             ),
                                             TextField(
                                               controller: _password,
@@ -453,55 +453,64 @@ class _LoginViewState extends State<LoginView> {
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      TextButton(
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                          foregroundColor:
-                                                              Colors.white,
-                                                        ),
-                                                        onPressed: () {
-                                                          context
-                                                              .read<AuthBloc>()
-                                                              .add(
-                                                                const AuthEventForgotPassword(
-                                                                    email: ''),
-                                                              );
-                                                        },
-                                                        child: Text(
-                                                          context.loc
-                                                              .forgot_password,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 15,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .underline,
+                                                      Flexible(
+                                                        child: TextButton(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                          ),
+                                                          onPressed: () {
+                                                            context
+                                                                .read<
+                                                                    AuthBloc>()
+                                                                .add(
+                                                                  const AuthEventForgotPassword(
+                                                                      email:
+                                                                          ''),
+                                                                );
+                                                          },
+                                                          child: Text(
+                                                            context.loc
+                                                                .forgot_password,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
                                                       const SizedBox(width: 10),
-                                                      TextButton(
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                          foregroundColor:
-                                                              Colors.white,
-                                                        ),
-                                                        onPressed: () {
-                                                          context
-                                                              .read<AuthBloc>()
-                                                              .add(
-                                                                const AuthEventShouldRegister(),
-                                                              );
-                                                        },
-                                                        child: Text(
-                                                          context.loc
-                                                              .login_view_not_registered_yet,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 15,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .underline,
+                                                      Flexible(
+                                                        child: TextButton(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                          ),
+                                                          onPressed: () {
+                                                            context
+                                                                .read<
+                                                                    AuthBloc>()
+                                                                .add(
+                                                                  const AuthEventShouldRegister(),
+                                                                );
+                                                          },
+                                                          child: Text(
+                                                            context.loc
+                                                                .login_view_not_registered_yet,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
                                                         ),
                                                       ),
