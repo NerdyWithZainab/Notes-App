@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:notes/services/cloud/cloud_note.dart'; // Import the CloudNote class
 import 'package:notes/utilities/dialogs/delete_dialog.dart';
@@ -27,20 +26,22 @@ class NotesListView extends StatefulWidget {
 }
 
 class _NotesListViewState extends State<NotesListView> {
-  String _sourceLang = 'English';
-  String _targetLang = 'French';
+  // Maintain separate language states for each note
+  Map<String, String> noteLanguages = {};
+
   String _translatedText = '';
 
   // Async function that updates the translated text directly in state
-  Future<void> translateText(String originalText) async {
+  Future<void> translateText(
+      String originalText, String sourceLang, String targetLang) async {
     final response = await http.post(
       Uri.parse(
           'http://localhost:5000/translate'), // Replace with your Flask server URL
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'text': originalText,
-        'source_lang': _sourceLang,
-        'target_lang': _targetLang,
+        'source_lang': sourceLang,
+        'target_lang': targetLang,
       }),
     );
 
@@ -82,58 +83,17 @@ class _NotesListViewState extends State<NotesListView> {
               ),
               child: Column(
                 children: [
-                  // Dropdowns for language selection
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      DropdownButton<String>(
-                        value: _sourceLang,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _sourceLang = newValue!;
-                          });
-                        },
-                        items: <String>[
-                          'English',
-                          'French',
-                          'Spanish',
-                          'German'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        hint: Text('Source Language'),
-                      ),
-                      DropdownButton<String>(
-                        value: _targetLang,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _targetLang = newValue!;
-                          });
-                        },
-                        items: <String>[
-                          'English',
-                          'French',
-                          'Spanish',
-                          'German'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        hint: Text('Target Language'),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 10),
                   Expanded(
                     child: ListView.builder(
                       itemCount: sortedNotes.length,
                       itemBuilder: (context, index) {
                         final note = sortedNotes[index];
+                        String? sourceLang =
+                            noteLanguages[note.documentId]?.split(',')[0];
+                        String? targetLang =
+                            noteLanguages[note.documentId]?.split(',')[1];
+
                         return Dismissible(
                           key: Key(note.documentId),
                           direction: DismissDirection.endToStart,
@@ -190,9 +150,54 @@ class _NotesListViewState extends State<NotesListView> {
                                     icon: const Icon(Icons.translate,
                                         color: Colors.white),
                                     onPressed: () {
-                                      translateText(note
-                                          .text); // Call the translation function directly
+                                      translateText(
+                                          note.text,
+                                          sourceLang ?? 'English',
+                                          targetLang ?? 'French');
                                     },
+                                  ),
+                                  // Dropdown for language selection inside each note
+                                  DropdownButton<String>(
+                                    value: sourceLang,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        noteLanguages[note.documentId] =
+                                            '$newValue,${targetLang ?? 'French'}';
+                                      });
+                                    },
+                                    items: <String>[
+                                      'English',
+                                      'French',
+                                      'Spanish',
+                                      'German'
+                                    ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  DropdownButton<String>(
+                                    value: targetLang,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        noteLanguages[note.documentId] =
+                                            '${sourceLang ?? 'English'},$newValue';
+                                      });
+                                    },
+                                    items: <String>[
+                                      'English',
+                                      'French',
+                                      'Spanish',
+                                      'German'
+                                    ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                                   ),
                                 ],
                               ),
