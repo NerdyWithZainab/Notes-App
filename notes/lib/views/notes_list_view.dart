@@ -26,39 +26,6 @@ class NotesListView extends StatefulWidget {
 }
 
 class _NotesListViewState extends State<NotesListView> {
-  // Maintain separate language states for each note
-  Map<String, String> noteLanguages = {};
-
-  String _translatedText = '';
-
-  // Async function that updates the translated text directly in state
-  Future<void> translateText(
-      String originalText, String sourceLang, String targetLang) async {
-    final response = await http.post(
-      Uri.parse(
-          'http://localhost:5000/translate'), // Replace with your Flask server URL
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'text': originalText,
-        'source_lang': sourceLang,
-        'target_lang': targetLang,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      setState(() {
-        _translatedText = responseData[
-            'translation']; // Updates the state with the translation
-      });
-    } else {
-      setState(() {
-        _translatedText =
-            'Translation failed: ${response.body}'; // Updates the state with error message
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     List<CloudNote> sortedNotes = List.from(widget.notes)
