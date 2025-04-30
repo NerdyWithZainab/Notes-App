@@ -16,9 +16,7 @@ import 'package:notes/views/notes_list_view.dart';
 Future<UserCredential?> signInWithGoogle() async {
   try {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) {
-      return null; // User canceled sign-in
-    }
+    if (googleUser == null) return null;
 
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -49,27 +47,11 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
   String? _userId;
-// Create a Kanban Board feature
-  Future<void> _openKanbanView() async {
-    if (_userId == null) return;
-    final notesSnapshot =
-        await _notesService.allNotes(ownerUserId: _userId!)!.first;
-    final notes = notesSnapshot.toList();
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => KanbanBoardScreen(
-          notes: notes,
-          onTap: () => Navigator.of(context).pop(),
-        ),
-      ),
-    );
-  }
 
   @override
   void initState() {
-    _notesService = FirebaseCloudStorage();
     super.initState();
+    _notesService = FirebaseCloudStorage();
     _initializeUser();
   }
 
@@ -83,6 +65,27 @@ class _NotesViewState extends State<NotesView> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacementNamed(loginRoute);
       });
+    }
+  }
+
+  Future<void> _openKanbanView() async {
+    try {
+      if (_userId == null) return;
+      final notesSnapshot =
+          await _notesService.allNotes(ownerUserId: _userId!)!.first;
+      final notes = notesSnapshot.toList();
+
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => KanbanBoardScreen(
+            notes: notes,
+            onTap: () => Navigator.of(context).pop(),
+          ),
+        ),
+      );
+    } catch (e) {
+      print('Error loading Kanban view: $e');
     }
   }
 
@@ -130,14 +133,12 @@ class _NotesViewState extends State<NotesView> {
                 await _handleLogout();
               }
             },
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  value: MenuAction.logout,
-                  child: Text(context.loc.logout_button),
-                )
-              ];
-            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: MenuAction.logout,
+                child: Text(context.loc.logout_button),
+              )
+            ],
           )
         ],
       ),
@@ -165,39 +166,27 @@ class _NotesViewState extends State<NotesView> {
                   Navigator.of(context).pushNamed('/folders');
                 },
                 color: Colors.white60,
-                icon: const Icon(
-                  Icons.folder,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.folder, size: 30),
               ),
               IconButton(
                 onPressed: _openKanbanView,
                 color: Colors.white60,
-                icon: const Icon(
-                  Icons.view_kanban,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.view_kanban, size: 30),
               ),
-              const SizedBox(width: 48), // Space for FAB
+              const SizedBox(width: 48),
               IconButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
                 },
                 color: Colors.white60,
-                icon: const Icon(
-                  Icons.note_alt,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.note_alt, size: 30),
               ),
               IconButton(
                 onPressed: () {
-                  // Add another action here if needed
+                  // Future settings logic
                 },
                 color: Colors.white60,
-                icon: const Icon(
-                  Icons.settings,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.settings, size: 30),
               ),
             ],
           ),
@@ -228,12 +217,12 @@ class _NotesViewState extends State<NotesView> {
                       onPinNote: (note) async {
                         await _notesService.updateNotePinStatus(
                           documentId: note.documentId,
-                          isPinned: !note.isPinned, // Toggle pin status
+                          isPinned: !note.isPinned,
                         );
                       },
                     );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: Text('No notes found.'));
                   }
                 } else {
                   return const Center(child: CircularProgressIndicator());
