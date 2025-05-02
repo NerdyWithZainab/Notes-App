@@ -8,6 +8,7 @@ import 'package:notes/utilities/generics/get_arguments.dart';
 import 'package:notes/services/cloud/cloud_note.dart';
 import 'package:notes/services/cloud/firebase_cloud_storage.dart';
 import 'package:share_plus/share_plus.dart';
+import 'dart:async';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({super.key});
@@ -116,32 +117,75 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       _isTranslating = true;
     });
     try {
-      final response = await http.post(
-        Uri.parse(
-            'http://192.168.1.122:5000/translate'), // Your Flask server URL
-        headers: {'Content-Type': 'application/json'},
+      final response = await http
+          .post(
+        Uri.parse('http://192.168.1.122:5000/translate'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: json.encode({
           'text': originalText,
           'source_lang': sourceLang,
           'target_lang': targetLang,
         }),
+      )
+          .timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException('The request timed out');
+        },
       );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         setState(() {
           _translatedText = responseData['translation'];
-          _textController.text = _translatedText; // Update note
+          _textController.text = _translatedText;
         });
+      } else if (response.statusCode == 405) {
+        throw Exception(
+            'Method not allowed. Please check server configuration.');
       } else {
+        final errorData = json.decode(response.body);
         setState(() {
-          _translatedText = 'Translation failed: ${response.body}';
+          _translatedText =
+              'Translation failed: ${errorData['error'] ?? response.body}';
         });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Translation failed: ${errorData['error'] ?? response.body}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } on TimeoutException {
+      setState(() {
+        _translatedText = 'Translation timed out. Please try again.';
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Translation timed out. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
       setState(() {
         _translatedText = 'Error: $e';
       });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Translation error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       setState(() {
         _isTranslating = false;
