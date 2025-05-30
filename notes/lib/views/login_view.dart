@@ -181,352 +181,462 @@ class _LoginViewState extends State<LoginView> {
                               inputDecorationTheme: const InputDecorationTheme(
                                   errorStyle: TextStyle(color: Colors.red)),
                             ),
-                            child: Column(children: [
-                              Expanded(
-                                flex: 2,
-                                child: Center(
-                                  child: Text(
-                                    'Capture',
-                                    style: GoogleFonts.lavishlyYours(
-                                        textStyle: const TextStyle(
-                                            fontSize: 100,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white)),
-                                  ),
+                            child: SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: MediaQuery.of(context)
+                                          .size
+                                          .height -
+                                      MediaQuery.of(context).padding.top -
+                                      MediaQuery.of(context).padding.bottom -
+                                      32, // Account for SafeArea and padding
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Expanded(
-                                flex: 4,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft:
-                                        Radius.circular(_isLoggingIn ? 0 : 30),
-                                    topRight:
-                                        Radius.circular(_isLoggingIn ? 0 : 30),
-                                    bottomLeft: const Radius.circular(30),
-                                    bottomRight: const Radius.circular(30),
-                                  ),
-                                  child: BackdropFilter(
-                                    filter: ImageFilter.blur(
-                                        sigmaX: 10.0, sigmaY: 10.0),
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color.fromRGBO(255, 255, 255, 0.35),
-                                            Color.fromRGBO(255, 255, 255, 0.25),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(
-                                              _isLoggingIn ? 0 : 30),
-                                          topRight: Radius.circular(
-                                              _isLoggingIn ? 0 : 30),
-                                          bottomLeft: const Radius.circular(30),
-                                          bottomRight:
-                                              const Radius.circular(30),
-                                        ),
-                                        border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              255, 255, 255, 0.5),
-                                          width: 1.0,
-                                        ),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Color.fromRGBO(
-                                                255, 255, 255, 0.05),
-                                            blurRadius: 10,
-                                            spreadRadius: 1,
+                                child: IntrinsicHeight(
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          flex: 2,
+                                          child: Center(
+                                            child: Text(
+                                              'Capture',
+                                              style: GoogleFonts.lavishlyYours(
+                                                  textStyle: const TextStyle(
+                                                      fontSize: 100,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white)),
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 30.0,
-                                          vertical: 30.0,
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              "Login your account",
-                                              style: const TextStyle(
-                                                  fontSize: 22,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Flexible(
+                                          flex: 3,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(
+                                                  _isLoggingIn ? 0 : 30),
+                                              topRight: Radius.circular(
+                                                  _isLoggingIn ? 0 : 30),
+                                              bottomLeft:
+                                                  const Radius.circular(30),
+                                              bottomRight:
+                                                  const Radius.circular(30),
                                             ),
-                                            const SizedBox(
-                                              height: 25,
-                                            ),
-                                            TextField(
-                                              controller: _email,
-                                              enableSuggestions: false,
-                                              autocorrect: false,
-                                              autofocus: true,
-                                              keyboardType:
-                                                  TextInputType.emailAddress,
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              style: const TextStyle(
-                                                  color: Colors.black87),
-                                              decoration: InputDecoration(
-                                                filled: true,
-                                                fillColor: const Color.fromRGBO(
-                                                    255, 255, 255, 0.7),
-                                                hintText: context.loc
-                                                    .email_text_field_placeholder,
-                                                hintStyle: const TextStyle(
-                                                    color: Colors.black54),
-                                                errorText: _emailError,
-                                                border: OutlineInputBorder(
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 10.0, sigmaY: 10.0),
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                  gradient:
+                                                      const LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Color.fromRGBO(
+                                                          255, 255, 255, 0.35),
+                                                      Color.fromRGBO(
+                                                          255, 255, 255, 0.25),
+                                                    ],
+                                                  ),
                                                   borderRadius:
-                                                      BorderRadius.circular(50),
-                                                  borderSide: BorderSide.none,
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                  borderSide: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 0.7),
+                                                      BorderRadius.only(
+                                                    topLeft: Radius.circular(
+                                                        _isLoggingIn ? 0 : 30),
+                                                    topRight: Radius.circular(
+                                                        _isLoggingIn ? 0 : 30),
+                                                    bottomLeft:
+                                                        const Radius.circular(
+                                                            30),
+                                                    bottomRight:
+                                                        const Radius.circular(
+                                                            30),
+                                                  ),
+                                                  border: Border.all(
+                                                    color: const Color.fromRGBO(
+                                                        255, 255, 255, 0.5),
                                                     width: 1.0,
                                                   ),
-                                                ),
-                                                prefixIcon: const Icon(
-                                                    Icons.email_outlined,
-                                                    color: Colors.black54),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            TextField(
-                                              controller: _password,
-                                              obscureText: _obscureText,
-                                              enableSuggestions: false,
-                                              autocorrect: false,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              style: const TextStyle(
-                                                  color: Colors.black87),
-                                              decoration: InputDecoration(
-                                                filled: true,
-                                                fillColor: const Color.fromRGBO(
-                                                    255, 255, 255, 0.7),
-                                                errorText: _passwordError,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                  borderSide: BorderSide.none,
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                  borderSide: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 0.7),
-                                                    width: 1.0,
-                                                  ),
-                                                ),
-                                                hintStyle: const TextStyle(
-                                                    color: Colors.black54),
-                                                hintText: context.loc
-                                                    .password_text_field_placeholder,
-                                                prefixIcon: const Icon(
-                                                    Icons.lock_outline,
-                                                    color: Colors.black54),
-                                                suffixIcon: IconButton(
-                                                  icon: Icon(
-                                                    _obscureText
-                                                        ? Icons
-                                                            .visibility_outlined
-                                                        : Icons
-                                                            .visibility_off_outlined,
-                                                    color: Colors.black54,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _obscureText =
-                                                          !_obscureText;
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 25),
-                                            Center(
-                                              child: Column(
-                                                children: [
-                                                  ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      foregroundColor:
-                                                          Colors.black,
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
-                                                      ),
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        horizontal: 40,
-                                                        vertical: 15,
-                                                      ),
-                                                      elevation: 3,
-                                                      shadowColor:
-                                                          const Color.fromRGBO(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              0.3),
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                      color: Color.fromRGBO(
+                                                          255, 255, 255, 0.05),
+                                                      blurRadius: 10,
+                                                      spreadRadius: 1,
                                                     ),
-                                                    onPressed:
-                                                        _signInWithEmailAndPassword,
-                                                    child: Text(
-                                                      context.loc.login,
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
+                                                  ],
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 30.0,
+                                                    vertical: 30.0,
                                                   ),
-                                                  const SizedBox(height: 15),
-                                                  ElevatedButton.icon(
-                                                    icon: const Icon(
-                                                        Icons.g_mobiledata,
-                                                        size: 24),
-                                                    label: const Text(
-                                                      "Login with Google",
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      foregroundColor:
-                                                          Colors.black87,
-                                                      backgroundColor:
-                                                          const Color.fromRGBO(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              0.9),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
-                                                      ),
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        horizontal: 40,
-                                                        vertical: 15,
-                                                      ),
-                                                      elevation: 3,
-                                                      shadowColor:
-                                                          const Color.fromRGBO(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              0.2),
-                                                    ),
-                                                    onPressed:
-                                                        _signInWithGoogle,
-                                                  ),
-                                                  const SizedBox(height: 15),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      Flexible(
-                                                        child: TextButton(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
+                                                      Text(
+                                                        "Login your account",
+                                                        style: const TextStyle(
+                                                            fontSize: 22,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 25,
+                                                      ),
+                                                      TextField(
+                                                        controller: _email,
+                                                        enableSuggestions:
+                                                            false,
+                                                        autocorrect: false,
+                                                        autofocus: true,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .emailAddress,
+                                                        textInputAction:
+                                                            TextInputAction
+                                                                .next,
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.black87),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          filled: true,
+                                                          fillColor: const Color
+                                                              .fromRGBO(255,
+                                                              255, 255, 0.7),
+                                                          hintText: context.loc
+                                                              .email_text_field_placeholder,
+                                                          hintStyle:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black54),
+                                                          errorText:
+                                                              _emailError,
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        50),
+                                                            borderSide:
+                                                                BorderSide.none,
                                                           ),
-                                                          onPressed: () {
-                                                            context
-                                                                .read<
-                                                                    AuthBloc>()
-                                                                .add(
-                                                                  const AuthEventForgotPassword(
-                                                                      email:
-                                                                          ''),
-                                                                );
-                                                          },
-                                                          child: Text(
-                                                            context.loc
-                                                                .forgot_password,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 15,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .underline,
+                                                          enabledBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        50),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      0.7),
+                                                              width: 1.0,
                                                             ),
+                                                          ),
+                                                          prefixIcon: const Icon(
+                                                              Icons
+                                                                  .email_outlined,
+                                                              color: Colors
+                                                                  .black54),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      TextField(
+                                                        controller: _password,
+                                                        obscureText:
+                                                            _obscureText,
+                                                        enableSuggestions:
+                                                            false,
+                                                        autocorrect: false,
+                                                        textInputAction:
+                                                            TextInputAction
+                                                                .done,
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.black87),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          filled: true,
+                                                          fillColor: const Color
+                                                              .fromRGBO(255,
+                                                              255, 255, 0.7),
+                                                          errorText:
+                                                              _passwordError,
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        50),
+                                                            borderSide:
+                                                                BorderSide.none,
+                                                          ),
+                                                          enabledBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        50),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      0.7),
+                                                              width: 1.0,
+                                                            ),
+                                                          ),
+                                                          hintStyle:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black54),
+                                                          hintText: context.loc
+                                                              .password_text_field_placeholder,
+                                                          prefixIcon: const Icon(
+                                                              Icons
+                                                                  .lock_outline,
+                                                              color: Colors
+                                                                  .black54),
+                                                          suffixIcon:
+                                                              IconButton(
+                                                            icon: Icon(
+                                                              _obscureText
+                                                                  ? Icons
+                                                                      .visibility_outlined
+                                                                  : Icons
+                                                                      .visibility_off_outlined,
+                                                              color: Colors
+                                                                  .black54,
+                                                            ),
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                _obscureText =
+                                                                    !_obscureText;
+                                                              });
+                                                            },
                                                           ),
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 10),
-                                                      Flexible(
-                                                        child: TextButton(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                          ),
-                                                          onPressed: () {
-                                                            context
-                                                                .read<
-                                                                    AuthBloc>()
-                                                                .add(
-                                                                  const AuthEventShouldRegister(),
-                                                                );
-                                                          },
-                                                          child: Text(
-                                                            context.loc
-                                                                .login_view_not_registered_yet,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 15,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .underline,
+                                                      const SizedBox(
+                                                          height: 25),
+                                                      Center(
+                                                        child: Column(
+                                                          children: [
+                                                            ElevatedButton(
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .black,
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              30),
+                                                                ),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                  horizontal:
+                                                                      40,
+                                                                  vertical: 15,
+                                                                ),
+                                                                elevation: 3,
+                                                                shadowColor:
+                                                                    const Color
+                                                                        .fromRGBO(
+                                                                        255,
+                                                                        255,
+                                                                        255,
+                                                                        0.3),
+                                                              ),
+                                                              onPressed:
+                                                                  _signInWithEmailAndPassword,
+                                                              child: Text(
+                                                                context
+                                                                    .loc.login,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
                                                             ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
+                                                            const SizedBox(
+                                                                height: 15),
+                                                            ElevatedButton.icon(
+                                                              icon: const Icon(
+                                                                  Icons
+                                                                      .g_mobiledata,
+                                                                  size: 24),
+                                                              label: const Text(
+                                                                "Login with Google",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .black87,
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromRGBO(
+                                                                        255,
+                                                                        255,
+                                                                        255,
+                                                                        0.9),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              30),
+                                                                ),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                  horizontal:
+                                                                      40,
+                                                                  vertical: 15,
+                                                                ),
+                                                                elevation: 3,
+                                                                shadowColor:
+                                                                    const Color
+                                                                        .fromRGBO(
+                                                                        255,
+                                                                        255,
+                                                                        255,
+                                                                        0.2),
+                                                              ),
+                                                              onPressed:
+                                                                  _signInWithGoogle,
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 15),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Flexible(
+                                                                  child:
+                                                                      TextButton(
+                                                                    style: TextButton
+                                                                        .styleFrom(
+                                                                      foregroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () {
+                                                                      context
+                                                                          .read<
+                                                                              AuthBloc>()
+                                                                          .add(
+                                                                            const AuthEventForgotPassword(email: ''),
+                                                                          );
+                                                                    },
+                                                                    child: Text(
+                                                                      context
+                                                                          .loc
+                                                                          .forgot_password,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        decoration:
+                                                                            TextDecoration.underline,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                                Flexible(
+                                                                  child:
+                                                                      TextButton(
+                                                                    style: TextButton
+                                                                        .styleFrom(
+                                                                      foregroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () {
+                                                                      context
+                                                                          .read<
+                                                                              AuthBloc>()
+                                                                          .add(
+                                                                            const AuthEventShouldRegister(),
+                                                                          );
+                                                                    },
+                                                                    child: Text(
+                                                                      context
+                                                                          .loc
+                                                                          .login_view_not_registered_yet,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        decoration:
+                                                                            TextDecoration.underline,
+                                                                      ),
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ],
+                                                ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                          ),
+                                        )
+                                      ]),
                                 ),
-                              )
-                            ]),
+                              ),
+                            ),
                           ),
                         ),
                       ),

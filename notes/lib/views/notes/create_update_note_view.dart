@@ -25,9 +25,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   // Translation Variables
   Map<String, String> noteLanguages = {}; // Store language per note
   String _translatedText = '';
-  bool _isTranslating = false; // Loading spinner control
-  String _selectedSourceLang = 'en'; // default
-  String _selectedTargetLang = 'fr'; // default
+  bool _isTranslating = false; // Loading spinner control // default
 
   // Available languages
   final Map<String, String> languages = {
@@ -38,7 +36,6 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     'ar': 'Arabic',
     'hi': 'Hindi',
     'zh': 'Chinese',
-    // Add more languages if your Hugging Face model supports
   };
 
   @override
@@ -193,6 +190,82 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     }
   }
 
+  // Function to show language selection dialog
+  Future<void> _showLanguageSelectionDialog(String text) async {
+    String selectedSource = 'en';
+    String selectedTarget = 'fr';
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.deepPurple.shade200,
+          title: const Text('Select Languages',
+              style: TextStyle(color: Colors.white)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: selectedSource,
+                dropdownColor: Colors.deepPurple.shade200,
+                decoration: const InputDecoration(labelText: 'Source Language'),
+                items: languages.entries.map((entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.key,
+                    child: Text(entry.value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) selectedSource = value;
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedTarget,
+                dropdownColor: Colors.deepPurple.shade200,
+                decoration: const InputDecoration(labelText: 'Target Language'),
+                items: languages.entries.map((entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.key,
+                    child: Text(entry.value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) selectedTarget = value;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child:
+                  const Text('Cancel', style: TextStyle(color: Colors.white)),
+            ),
+            ElevatedButton(
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                setState(() {
+                  _isTranslating = true;
+                });
+                await translateText(
+                  text,
+                  languages[selectedSource]!,
+                  languages[selectedTarget]!,
+                );
+                setState(() {
+                  _isTranslating = false;
+                });
+              },
+              child: const Text('Translate'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 // --- UI Building Starts ---
   @override
   Widget build(BuildContext context) {
@@ -220,21 +293,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
             onPressed: () async {
               final text = _textController.text;
               if (text.isNotEmpty) {
-                setState(() {
-                  _isTranslating = true; // Start loading when translating
-                });
-
-                await translateText(
-                  text,
-                  'en', // Source language (English)
-                  'fr', // Target language (French)
-                );
-
-                setState(() {
-                  _textController.text =
-                      _translatedText; // Update the note text
-                  _isTranslating = false; // Stop loading
-                });
+                await _showLanguageSelectionDialog(text);
               }
             },
             icon: const Icon(Icons.translate),
