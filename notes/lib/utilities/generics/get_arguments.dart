@@ -11,5 +11,6 @@ extension GetArgument on BuildContext {
     } else {
       return null;
     }
+    return null;
   }
 }
