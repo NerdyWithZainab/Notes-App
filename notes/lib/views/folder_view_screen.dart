@@ -84,8 +84,21 @@ class _FolderViewScreenState extends State<FolderViewScreen> {
           : ListView.builder(
               itemCount: _folders.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_folders[index]),
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListTile(
+                      title: Text(
+                        _folders[index],
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      onTap: () {}),
                 );
               },
             ),

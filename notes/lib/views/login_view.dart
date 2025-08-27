@@ -65,11 +65,10 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _signInWithGoogle() async {
-    final user =
-        await Authentication.signInWithGoogle(context: context as BuildContext);
+    final user = await Authentication.signInWithGoogle(context: context);
     if (user != null) {
       showDialog(
-        context: context as BuildContext,
+        context: context,
         builder: (BuildContext context) {
           return const AlertDialog(
             title: Text('Login Successful'),
@@ -78,7 +77,7 @@ class _LoginViewState extends State<LoginView> {
         },
       );
     } else {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content:
               Text('Failed to sign in with Google. Please try again later.')));
     }

@@ -3,7 +3,8 @@ import 'package:notes/constants/routes.dart';
 import 'package:notes/enums/menu_action.dart';
 import 'package:notes/extensions/buildcontext/loc.dart';
 import 'package:notes/services/auth/auth_service.dart';
-import 'package:notes/services/cloud/firebase_cloud_storage.dart';
+import 'package:notes/injection_container.dart';
+import 'package:notes/features/notes/presentation/controllers/notes_controller.dart';
 import 'package:notes/utilities/dialogs/logout_dialog.dart';
 import 'package:notes/views/login_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notes/views/notes/kanban_board.dart';
 import 'package:notes/calender/calendar_screen.dart';
 import 'package:notes/services/cloud/cloud_note.dart';
+import 'package:notes/features/notes/domain/entities/note.dart' as domain;
 import 'package:notes/views/notes_list_view.dart';
 
 Future<UserCredential?> signInWithGoogle() async {
@@ -45,13 +47,13 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
-  late final FirebaseCloudStorage _notesService;
+  late final NotesController _controller;
   String? _userId;
 
   @override
   void initState() {
     super.initState();
-    _notesService = FirebaseCloudStorage();
+    _controller = ServiceLocator().notesController;
     _initializeUser();
   }
 
@@ -71,9 +73,15 @@ class _NotesViewState extends State<NotesView> {
   Future<void> _openKanbanView() async {
     try {
       if (_userId == null) return;
-      final notesSnapshot =
-          await _notesService.allNotes(ownerUserId: _userId!)!.first;
-      final notes = notesSnapshot.toList();
+      final domainNotes = await _controller.notesStream(_userId!).first;
+      final notes = domainNotes
+          .map((n) => CloudNote(
+                documentId: n.id,
+                ownerUserId: n.ownerUserId,
+                text: n.text,
+                isPinned: n.isPinned,
+              ))
+          .toList();
 
       if (!mounted) return;
       Navigator.of(context).push(
@@ -113,8 +121,9 @@ class _NotesViewState extends State<NotesView> {
           child: _userId == null
               ? const Text('')
               : StreamBuilder<int>(
-                  stream:
-                      _notesService.allNotes(ownerUserId: _userId!)?.getLength,
+                  stream: _controller
+                      .notesStream(_userId!)
+                      .map((list) => list.length),
                   builder: (context, snapshot) {
                     final noteCount = snapshot.data ?? 0;
                     return Text(
@@ -194,19 +203,25 @@ class _NotesViewState extends State<NotesView> {
       ),
       body: _userId == null
           ? const Center(child: CircularProgressIndicator())
-          : StreamBuilder<Iterable<CloudNote>>(
-              stream: _notesService.allNotes(ownerUserId: _userId!),
+          : StreamBuilder<List<domain.Note>>(
+              stream: _controller.notesStream(_userId!),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting ||
                     snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.hasData) {
-                    final allNotes = snapshot.data!.toList();
+                    final list = snapshot.data!;
+                    final allNotes = list
+                        .map((n) => CloudNote(
+                              documentId: n.id,
+                              ownerUserId: n.ownerUserId,
+                              text: n.text,
+                              isPinned: n.isPinned,
+                            ))
+                        .toList();
                     return NotesListView(
                       notes: allNotes,
                       onDeleteNote: (note) async {
-                        await _notesService.deleteNote(
-                          documentId: note.documentId,
-                        );
+                        await _controller.delete(note.documentId);
                       },
                       onTap: (note) {
                         Navigator.of(context).pushNamed(
@@ -215,9 +230,9 @@ class _NotesViewState extends State<NotesView> {
                         );
                       },
                       onPinNote: (note) async {
-                        await _notesService.updateNotePinStatus(
-                          documentId: note.documentId,
-                          isPinned: !note.isPinned,
+                        await _controller.setPinned(
+                          note.documentId,
+                          !note.isPinned,
                         );
                       },
                     );
