@@ -50,5 +50,3 @@ class NotesRemoteDataSourceFirebase implements NotesRemoteDataSource {
   Future<void> updateNotePinStatus(String id, bool isPinned) =>
       collection.doc(id).update({'isPinned': isPinned});
 }
-
-

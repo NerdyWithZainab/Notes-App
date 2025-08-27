@@ -9,11 +9,11 @@ import 'package:notes/utilities/dialogs/logout_dialog.dart';
 import 'package:notes/views/login_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:notes/views/notes/kanban_board.dart';
+import 'package:notes/features/notes/presentation/pages/kanban_board.dart';
 import 'package:notes/calender/calendar_screen.dart';
-import 'package:notes/services/cloud/cloud_note.dart';
+import 'package:notes/features/notes/data/models/cloud_note.dart';
 import 'package:notes/features/notes/domain/entities/note.dart' as domain;
-import 'package:notes/views/notes_list_view.dart';
+import 'package:notes/features/notes/presentation/widgets/notes_list_view.dart';
 
 Future<UserCredential?> signInWithGoogle() async {
   try {
