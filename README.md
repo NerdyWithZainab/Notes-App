@@ -9,24 +9,24 @@
 
 This is a productivity mobile application used to achieve your goals where you can write your thoughts when you remember a memory. A lot of features are yet to be updated which includes:&nbsp;
 
-[x] Add notes &nbsp;
-[x] CRUD Functionality &nbsp;
-[ ] Kanban Board &nbsp;
-[ ] AI Chatbot &nbsp;
-[ ] Add a search bar to search notes &nbsp;
-[ ] AI Based themes &nbsp;
-[ ] Sub Folders &nbsp;
-[ ] Vision Board &nbsp;
-[ ] Calendar Setup &nbsp;
-[ ] Screen Limit &nbsp;
-[ ] Procrastination Timer &nbsp;
-[ ] Progress Checker &nbsp;
-[ ] Different Spaces &nbsp;
-[ ] Transcribe the audio &nbsp;
-[ ] Add profile Avatars using Unity &nbsp;
-[ ] Financial Dashboard &nbsp;
-[ ] Face Recognition &nbsp;
-[ ] UPI Payments &nbsp;
+- [x] Add notes 
+- [x] CRUD Functionality 
+- [ ] Kanban Board 
+- [ ] AI Chatbot 
+- [ ] Add a search bar to search notes 
+- [ ] AI Based themes 
+- [ ] Sub Folders 
+- [ ] Vision Board 
+- [ ] Calendar Setup 
+- [ ] Screen Limit 
+- [ ] Procrastination Timer 
+- [ ] Progress Checker 
+- [ ] Different Spaces 
+- [ ] Transcribe the audio 
+- [ ] Add profile Avatars using Unity 
+- [ ] Financial Dashboard 
+- [ ] Face Recognition 
+- [ ] UPI Payments 
 
 
 ## How to use it
