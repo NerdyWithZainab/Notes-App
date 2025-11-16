@@ -7,7 +7,26 @@
 
 ### Notes Mobile App
 
-This is a simple notes app where you can write your thoughts when you remember a memory. It is still yet to be updated.
+This is a productivity mobile application used to achieve your goals where you can write your thoughts when you remember a memory. A lot of features are yet to be updated which includes:
+[x] Add notes
+[x] CRUD Functionality
+[] Kanban Board
+[] AI Chatbot
+[] Add a search bar to search notes
+[] AI Based themes
+[] Sub Folders
+[] Vision Board
+[] Calendar Setup
+[] Screen Limit
+[] Procrastination Timer
+[] Progress Checker
+[] Different Spaces
+[] Transcribe the audio
+[] Add profile Avatars using Unity
+[] Financial Dashboard
+[] Face Recognition 
+[] UPI Payments
+
 
 ## How to use it
 
@@ -21,6 +40,7 @@ git clone https://github.com/NerdyWithZainab/Notes-App.git
 - Firebase
   - Authentication
 - ChatGPT
+- TensorFlow Lite
 
 ## Contributions
 
