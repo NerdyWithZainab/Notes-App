@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notes/extensions/buildcontext/loc.dart';
-import 'package:notes/services/auth/auth_exceptions.dart';
-import 'package:notes/services/auth/bloc/auth_bloc.dart';
-import 'package:notes/services/auth/bloc/auth_event.dart';
-import 'package:notes/services/auth/bloc/auth_state.dart';
+import 'package:notes/features/auth/data/auth/auth_exceptions.dart';
+import 'package:notes/features/auth/data/auth/bloc/auth_bloc.dart';
+import 'package:notes/features/auth/data/auth/bloc/auth_event.dart';
+import 'package:notes/features/auth/data/auth/bloc/auth_state.dart';
 import 'package:notes/utilities/dialogs/error_dialog.dart';
 import 'package:path/path.dart';
-import '../utils/authentication.dart';
+import '../../../../../../../utils/authentication.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});

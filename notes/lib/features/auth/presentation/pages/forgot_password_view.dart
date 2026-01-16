@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/extensions/buildcontext/loc.dart';
-import 'package:notes/services/auth/bloc/auth_bloc.dart';
-import 'package:notes/services/auth/bloc/auth_event.dart';
-import 'package:notes/services/auth/bloc/auth_state.dart';
+import 'package:notes/features/auth/data/auth/bloc/auth_bloc.dart';
+import 'package:notes/features/auth/data/auth/bloc/auth_event.dart';
+import 'package:notes/features/auth/data/auth/bloc/auth_state.dart';
 import 'package:notes/utilities/dialogs/error_dialog.dart';
 import 'package:notes/utilities/dialogs/password_reset_email_sent_dialog.dart';
 

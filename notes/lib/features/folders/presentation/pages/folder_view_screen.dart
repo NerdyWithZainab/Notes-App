@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes/views/folder_view.dart';
+import 'package:notes/features/folders/presentation/pages/folder_view.dart';
 
 class FolderViewScreen extends StatefulWidget {
   const FolderViewScreen({super.key});

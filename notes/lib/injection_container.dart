@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'features/notes/data/datasources/notes_remote_data_source.dart';
-import 'features/notes/data/repositories/note_repository_impl.dart';
-import 'features/notes/domain/repositories/note_repository.dart';
-import 'features/notes/domain/usecases/usecases.dart';
-import 'features/notes/presentation/controllers/notes_controller.dart';
+import 'features/auth/data/datasources/notes_remote_data_source.dart';
+import 'features/auth/data/repositories/note_repository_impl.dart';
+import 'features/auth/domain/repositories/note_repository.dart';
+import 'features/auth/domain/usecases/usecases.dart';
+import 'features/auth/presentation/controllers/notes_controller.dart';
 
 class ServiceLocator {
   static final ServiceLocator _instance = ServiceLocator._internal();

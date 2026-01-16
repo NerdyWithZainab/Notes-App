@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:notes/services/cloud/cloud_note.dart';
-import 'package:notes/services/cloud/cloud_storage_constants.dart';
-import 'package:notes/services/cloud/cloud_storage_exceptions.dart';
+import 'package:notes/features/notes/domain/services/cloud/cloud_note.dart';
+import 'package:notes/features/notes/domain/services/cloud/cloud_storage_constants.dart';
+import 'package:notes/features/notes/domain/services/cloud/cloud_storage_exceptions.dart';
 
 class FirebaseCloudStorage {
   final CollectionReference<Map<String, dynamic>> notes =

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes/features/notes/data/models/cloud_note.dart';
+import 'package:notes/features/auth/data/models/cloud_note.dart';
 
 class KanbanBoardScreen extends StatefulWidget {
   final List<CloudNote> notes;

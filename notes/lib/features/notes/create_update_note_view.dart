@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:notes/extensions/buildcontext/loc.dart';
-import 'package:notes/services/auth/auth_service.dart';
+import 'package:notes/features/auth/data/auth/auth_service.dart';
 import 'package:notes/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:notes/utilities/generics/get_arguments.dart';
-import 'package:notes/services/cloud/cloud_note.dart';
+import 'package:notes/features/notes/domain/services/cloud/cloud_note.dart';
 // Using controller instead of direct Firebase service
 import 'package:notes/injection_container.dart';
-import 'package:notes/features/notes/presentation/controllers/notes_controller.dart';
+import 'package:notes/features/auth/presentation/controllers/notes_controller.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:async';
 
